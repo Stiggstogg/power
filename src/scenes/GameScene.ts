@@ -1,12 +1,11 @@
 import Phaser from 'phaser';
 
 import Sponge from '../sprites/Sponge'
+import gameOptions from "../helper/gameOptions";
 
 // "Game" scene: Scene for the main game
 export default class GameScene extends Phaser.Scene {
 
-    private gameWidth!: number;
-    private gameHeight!: number;
     private sponge!: Sponge;
 
     // Constructor
@@ -18,10 +17,6 @@ export default class GameScene extends Phaser.Scene {
 
     /// Initialize parameters
     init(): void {
-
-        // get game width and height
-        this.gameWidth = Number(this.sys.game.config.width);
-        this.gameHeight = Number(this.sys.game.config.height);
 
     }
 
@@ -37,7 +32,7 @@ export default class GameScene extends Phaser.Scene {
         this.sponge = this.add.existing(new Sponge(this, 100, 100));
 
         // Instruction / press key text
-        this.add.text(this.gameWidth / 2, this.gameHeight - 46,
+        this.add.text(gameOptions.gameWidth / 2, gameOptions.gameHeight - 46,
             'Use arrow keys or W, A, S, D to move Sponge Bob around\n' +
             'Click with the mouse on it to finish the game', {
                 font: '20px Arial',
@@ -59,18 +54,18 @@ export default class GameScene extends Phaser.Scene {
     addKeys(): void {
 
         // up and down keys (moving the selection of the entries)
-        this.input.keyboard.addKey('Down').on('down', function(this: GameScene) { this.sponge.move('down') }, this);
-        this.input.keyboard.addKey('S').on('down', function(this: GameScene) { this.sponge.move('down') }, this);
-        this.input.keyboard.addKey('Up').on('down', function(this: GameScene) { this.sponge.move('up') }, this);
-        this.input.keyboard.addKey('W').on('down', function(this: GameScene) { this.sponge.move('up') }, this);
-        this.input.keyboard.addKey('Left').on('down', function(this: GameScene) { this.sponge.move('left') }, this);
-        this.input.keyboard.addKey('A').on('down', function(this: GameScene) { this.sponge.move('left') }, this);
-        this.input.keyboard.addKey('Right').on('down', function(this: GameScene) { this.sponge.move('right') }, this);
-        this.input.keyboard.addKey('D').on('down', function(this: GameScene) { this.sponge.move('right') }, this);
+        this.input.keyboard!.addKey('Down').on('down', function(this: GameScene) { this.sponge.move('down') }, this);
+        this.input.keyboard!.addKey('S').on('down', function(this: GameScene) { this.sponge.move('down') }, this);
+        this.input.keyboard!.addKey('Up').on('down', function(this: GameScene) { this.sponge.move('up') }, this);
+        this.input.keyboard!.addKey('W').on('down', function(this: GameScene) { this.sponge.move('up') }, this);
+        this.input.keyboard!.addKey('Left').on('down', function(this: GameScene) { this.sponge.move('left') }, this);
+        this.input.keyboard!.addKey('A').on('down', function(this: GameScene) { this.sponge.move('left') }, this);
+        this.input.keyboard!.addKey('Right').on('down', function(this: GameScene) { this.sponge.move('right') }, this);
+        this.input.keyboard!.addKey('D').on('down', function(this: GameScene) { this.sponge.move('right') }, this);
 
         // enter and space key (confirming a selection)
-        this.input.keyboard.addKey('Enter').on('down', function(this: GameScene) { this.spaceEnterKey() }, this);
-        this.input.keyboard.addKey('Space').on('down', function(this: GameScene) { this.spaceEnterKey() }, this);
+        this.input.keyboard!.addKey('Enter').on('down', function(this: GameScene) { this.spaceEnterKey() }, this);
+        this.input.keyboard!.addKey('Space').on('down', function(this: GameScene) { this.spaceEnterKey() }, this);
 
     }
 

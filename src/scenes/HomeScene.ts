@@ -1,10 +1,9 @@
 import Phaser from 'phaser';
+import gameOptions from "../helper/gameOptions";
 
 // "Home" scene: Main game menu scene
 export default class HomeScene extends Phaser.Scene {
 
-    private gameWidth!: number;
-    private gameHeight!: number;
     private title!: Phaser.GameObjects.Text;
     private titleText!: string;
     private menuEntries!: string[];
@@ -27,10 +26,6 @@ export default class HomeScene extends Phaser.Scene {
     // Initialize parameters
     init(): void {
 
-        // get game width and height
-        this.gameWidth = Number(this.sys.game.config.width);
-        this.gameHeight = Number(this.sys.game.config.height);
-
         // title text
         this.titleText = 'My Game';
 
@@ -46,7 +41,7 @@ export default class HomeScene extends Phaser.Scene {
 
         // styles of the title menu entries (active or inactive) and instruction text
         this.titleStyle = {
-            fontFamily: 'Arial',
+            fontFamily: 'Orbitron',
             fontSize: '70px',
             color: '#FFFF00',
             fontStyle: 'bold'
@@ -81,10 +76,10 @@ export default class HomeScene extends Phaser.Scene {
     create(): void {
 
         // Title
-        this.title = this.add.text(this.gameWidth / 2, this.gameHeight * 0.2, this.titleText, this.titleStyle).setOrigin(0.5, 0.5);
+        this.title = this.add.text(gameOptions.gameWidth / 2, gameOptions.gameHeight * 0.2, this.titleText, this.titleStyle).setOrigin(0.5, 0.5);
 
         // Instruction / press key text
-        this.add.text(this.gameWidth / 2, this.gameHeight - 46, this.instructionText, this.instructionStyle).setOrigin(0.5);
+        this.add.text(gameOptions.gameWidth / 2, gameOptions.gameHeight - 46, this.instructionText, this.instructionStyle).setOrigin(0.5);
 
         // Create the menu with its entries
         this.createMenu(this.menuEntries);
@@ -94,17 +89,30 @@ export default class HomeScene extends Phaser.Scene {
 
     }
 
-    // Creates the menu with its entries and sets the styles for it
+    // Creates the menu with its entries, sets the styles for it and adds the mouse events
     createMenu(menuEntries: string[]): void {
 
         // start position and y space between the entries
-        const start = {x: this.gameWidth / 2, y: this.title.y + this.gameHeight * 0.2};      // start position
-        const ySpace = this.gameHeight * 0.1;                                         // ySpace between the entries
+        const start = {x: gameOptions.gameWidth / 2, y: this.title.y + gameOptions.gameHeight * 0.2};      // start position
+        const ySpace = gameOptions.gameHeight * 0.1;                                         // ySpace between the entries
 
         // create menu items (loop through each item)
         for (let i = 0;i < menuEntries.length; i++) {
-            this.items.push(this.add.text(start.x, start.y + i * ySpace, menuEntries[i])
-                .setOrigin(0.5));
+
+            const item = this.add.text(start.x, start.y + i * ySpace, menuEntries[i]).setOrigin(0.5);
+
+            item.setInteractive();          // set interactive
+
+            item.on(Phaser.Input.Events.POINTER_OVER, function(this: HomeScene) : void {        // set event action for mouse over (selecting it)
+                this.selectSpecific(i);
+            }, this);
+
+            item.on(Phaser.Input.Events.POINTER_DOWN, function(this: HomeScene) : void {        // set event action for pointer down (clicking it with the mouse)
+                this.selectSpecific(i);          // select the entry (if not already)
+                this.spaceEnterKey();           // click it
+            }, this);
+
+            this.items.push(item);
         }
 
         this.highlightSelected();         // highlight the selected entry
@@ -142,6 +150,16 @@ export default class HomeScene extends Phaser.Scene {
 
     }
 
+    // Select specific menu entry (when moving with the mouse over it)
+    selectSpecific(itemIndex: number): void {
+
+        this.selected = itemIndex;
+
+        // highlight the selected entry
+        this.highlightSelected();
+
+    }
+
      // Highlights the selected entry (changing the styles of the deselected and selected entries)
     highlightSelected(): void {
 
@@ -157,14 +175,14 @@ export default class HomeScene extends Phaser.Scene {
     addKeys(): void {
 
         // up and down keys (moving the selection of the entries)
-        this.input.keyboard.addKey('Down').on('down', function(this: HomeScene) { this.selectNext() }, this);
-        this.input.keyboard.addKey('S').on('down', function(this: HomeScene) { this.selectNext() }, this);
-        this.input.keyboard.addKey('Up').on('down', function(this: HomeScene) { this.selectPrevious() }, this);
-        this.input.keyboard.addKey('W').on('down', function(this: HomeScene) { this.selectPrevious() }, this);
+        this.input.keyboard!.addKey('Down').on('down', function(this: HomeScene) { this.selectNext() }, this);
+        this.input.keyboard!.addKey('S').on('down', function(this: HomeScene) { this.selectNext() }, this);
+        this.input.keyboard!.addKey('Up').on('down', function(this: HomeScene) { this.selectPrevious() }, this);
+        this.input.keyboard!.addKey('W').on('down', function(this: HomeScene) { this.selectPrevious() }, this);
 
         // enter and space key (confirming a selection)
-        this.input.keyboard.addKey('Enter').on('down', function(this: HomeScene) { this.spaceEnterKey() }, this);
-        this.input.keyboard.addKey('Space').on('down', function(this: HomeScene) { this.spaceEnterKey() }, this);
+        this.input.keyboard!.addKey('Enter').on('down', function(this: HomeScene) { this.spaceEnterKey() }, this);
+        this.input.keyboard!.addKey('Space').on('down', function(this: HomeScene) { this.spaceEnterKey() }, this);
 
     }
 
