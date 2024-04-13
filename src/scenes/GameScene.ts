@@ -6,7 +6,10 @@ import gameOptions from "../helper/gameOptions";
 // "Game" scene: Scene for the main game
 export default class GameScene extends Phaser.Scene {
 
-    private sponge!: Sponge;
+    private floor1!: Phaser.GameObjects.TileSprite;
+    private floor2!: Phaser.GameObjects.TileSprite;
+    private player!: Phaser.GameObjects.Sprite;
+    private staticGroup!: Phaser.Physics.Arcade.StaticGroup;
 
     // Constructor
     constructor() {
@@ -28,16 +31,31 @@ export default class GameScene extends Phaser.Scene {
     // Creates all objects of this scene
     create(): void {
 
-        // sprite
-        this.sponge = this.add.existing(new Sponge(this, 100, 100));
+        // setup world
+        this.physics.world.bounds.width = gameOptions.gameWidth*2;
+        this.physics.world.bounds.height = gameOptions.gameHeight;
 
-        // Instruction / press key text
-        this.add.text(gameOptions.gameWidth / 2, gameOptions.gameHeight - 46,
-            'Use arrow keys or W, A, S, D to move Sponge Bob around\n' +
-            'Click with the mouse on it to finish the game', {
-                font: '20px Arial',
-                color: '#27ff00'
-            }).setOrigin(0.5);
+        // set the camera
+        this.cameras.main.setBounds(0, 0, gameOptions.gameWidth*2, gameOptions.gameHeight);       // set the camera boundaries (to the world size)
+
+        // create floor
+        this.floor1 = this.add.tileSprite(0, 476, 1140, 64, 'spritesheet',0).setOrigin(0);
+        this.floor2 = this.add.tileSprite(1340, 476, 940, 64, 'spritesheet',0).setOrigin(0);
+
+        // create player
+        this.player = this.add.sprite(50, 350, 'spritesheet', 1);
+
+        this.cameras.main.startFollow(this.player, false, 1, 1, -gameOptions.gameWidth / 2 + 64, 0);
+
+        // add physics
+        this.staticGroup = this.physics.add.staticGroup([this.floor1, this.floor2]);
+        this.physics.add.existing(this.player, false);
+
+        // setup collisions and overlap
+        this.physics.add.collider(this.player, this.staticGroup);
+
+        // set speed of player and disable physics for powerup
+        this.player.body.setVelocityX(100);
 
         // Add keyboard inputs
         this.addKeys();
@@ -47,32 +65,33 @@ export default class GameScene extends Phaser.Scene {
     // Update function for the game loop.
     update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
 
-
     }
 
     // Add keyboard input to the scene.
     addKeys(): void {
 
-        // up and down keys (moving the selection of the entries)
-        this.input.keyboard!.addKey('Down').on('down', function(this: GameScene) { this.sponge.move('down') }, this);
-        this.input.keyboard!.addKey('S').on('down', function(this: GameScene) { this.sponge.move('down') }, this);
-        this.input.keyboard!.addKey('Up').on('down', function(this: GameScene) { this.sponge.move('up') }, this);
-        this.input.keyboard!.addKey('W').on('down', function(this: GameScene) { this.sponge.move('up') }, this);
-        this.input.keyboard!.addKey('Left').on('down', function(this: GameScene) { this.sponge.move('left') }, this);
-        this.input.keyboard!.addKey('A').on('down', function(this: GameScene) { this.sponge.move('left') }, this);
-        this.input.keyboard!.addKey('Right').on('down', function(this: GameScene) { this.sponge.move('right') }, this);
-        this.input.keyboard!.addKey('D').on('down', function(this: GameScene) { this.sponge.move('right') }, this);
-
-        // enter and space key (confirming a selection)
-        this.input.keyboard!.addKey('Enter').on('down', function(this: GameScene) { this.spaceEnterKey() }, this);
-        this.input.keyboard!.addKey('Space').on('down', function(this: GameScene) { this.spaceEnterKey() }, this);
+        this.input.keyboard!.addKey('Space').on('down', function(this: GameScene) {
+            this.spaceEnterKey()
+        }, this);
 
     }
 
     // Action which happens when the enter or space key is pressed.
     spaceEnterKey(): void {
 
-        console.log('Space or Enter key pressed!');
+        const spawnposition = this.cameras.main.worldView.x + gameOptions.gameWidth / 2;
+
+        const powerup = this.add.sprite(spawnposition, 50, 'spritesheet', 2);
+        this.physics.add.existing(powerup, false);
+
+        powerup.body.setVelocityX(-100);
+
+        this.physics.add.collider(powerup, this.staticGroup);
+        this.physics.add.overlap(this.player, powerup, () => {
+            powerup.destroy();
+            this.player.body.setVelocity(500,-1000);
+        });
+
 
     }
 

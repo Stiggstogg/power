@@ -15,13 +15,20 @@ const config: Phaser.Types.Core.GameConfig = {
     width: gameOptions.gameWidth,
     height: gameOptions.gameHeight,
     scene: [BootScene, LoadingScene, HomeScene, GameScene],
-    title: 'My Game',                  // Shown in the console
+    title: 'Power',                  // Shown in the console
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     pixelArt: false,                                     // if true pixel perfect rendering is used
-    backgroundColor: '#000000'
+    backgroundColor: '#cbdbfc',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: {y: 3000},
+            debug: false
+        }
+    },
 };
 
 new Phaser.Game(config);

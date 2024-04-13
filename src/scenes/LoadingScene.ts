@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import spongeImg from '../assets/images/sponge.jpeg';
 import WebFontFile from "../helper/WebFontFile";
 import gameOptions from "../helper/gameOptions";
+import spriteSheetImg from "../assets/images/Spritesheet.png";
 
 // "Loading" scene: Loads all assets and shows a progress bar while loading
 export default class LoadingScene extends Phaser.Scene {
@@ -59,10 +60,13 @@ export default class LoadingScene extends Phaser.Scene {
         }, this);
 
         // load images
-        this.load.image('sponge', spongeImg);
+        //this.load.image('sponge', spongeImg);
 
         // load audio
         //this.load.audio('miss', 'assets/audio/Pew.mp3');
+
+        // load sprite sheet
+        this.load.spritesheet('spritesheet', spriteSheetImg, {frameWidth: 64, frameHeight: 64});
 
         // load fonts (with "webfontloader")
         this.load.addFile(new WebFontFile(this.load, 'Orbitron'));
@@ -71,7 +75,7 @@ export default class LoadingScene extends Phaser.Scene {
 
     // Add the animations and change to "Home" scene, directly after loading
     create() {
-        this.scene.start('Home');
+        this.scene.start('Game');
     }
 
 }
