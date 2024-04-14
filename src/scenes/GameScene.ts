@@ -1,15 +1,12 @@
 import Phaser from 'phaser';
 
-import Sponge from '../sprites/Sponge'
 import gameOptions from "../helper/gameOptions";
 
 // "Game" scene: Scene for the main game
 export default class GameScene extends Phaser.Scene {
 
-    private floor1!: Phaser.GameObjects.TileSprite;
-    private floor2!: Phaser.GameObjects.TileSprite;
+    private platforms!: Phaser.Tilemaps.TilemapLayer;
     private player!: Phaser.GameObjects.Sprite;
-    private staticGroup!: Phaser.Physics.Arcade.StaticGroup;
 
     // Constructor
     constructor() {
@@ -23,11 +20,6 @@ export default class GameScene extends Phaser.Scene {
 
     }
 
-    // load assets
-    preload(): void {
-
-    }
-
     // Creates all objects of this scene
     create(): void {
 
@@ -38,24 +30,55 @@ export default class GameScene extends Phaser.Scene {
         // set the camera
         this.cameras.main.setBounds(0, 0, gameOptions.gameWidth*2, gameOptions.gameHeight);       // set the camera boundaries (to the world size)
 
-        // create floor
-        this.floor1 = this.add.tileSprite(0, 476, 1140, 64, 'spritesheet',0).setOrigin(0);
-        this.floor2 = this.add.tileSprite(1340, 476, 940, 64, 'spritesheet',0).setOrigin(0);
+        // create map
+        const map = this.make.tilemap({
+            key: 'level1'
+        });
+        const tileSet = map.addTilesetImage('1-Bit Platformer', 'tileSet')!;
+        this.platforms = map.createLayer('Platformen', tileSet)!;
+        this.platforms.setCollisionByProperty({collides: true});
 
         // create player
-        this.player = this.add.sprite(50, 350, 'spritesheet', 1);
-
-        this.cameras.main.startFollow(this.player, false, 1, 1, -gameOptions.gameWidth / 2 + 64, 0);
+        this.player = this.add.sprite(32, 150, 'player');
+        this.cameras.main.startFollow(this.player, true, 1, 1, -gameOptions.gameWidth / 2 + 64, 0);
 
         // add physics
-        this.staticGroup = this.physics.add.staticGroup([this.floor1, this.floor2]);
+        //this.staticGroup = this.physics.add.staticGroup([this.floor1, this.floor2, this.floor3]);
         this.physics.add.existing(this.player, false);
 
         // setup collisions and overlap
-        this.physics.add.collider(this.player, this.staticGroup);
+        this.physics.add.collider(this.player, this.platforms);
 
-        // set speed of player and disable physics for powerup
-        this.player.body.setVelocityX(100);
+        // set speed of player
+        if ("setVelocityX" in this.player.body!) {
+            this.player.body.setVelocityX(100);
+        }
+
+        // set pointer event
+        this.input.on('pointerdown', () =>
+        {
+
+            // top spawner
+            const spawnX = this.cameras.main.worldView.x + gameOptions.gameWidth / 2;
+            const spawnY = gameOptions.gameHeight * 0.1;
+
+            const powerUp = this.physics.add.sprite(spawnX, spawnY, 'powerup');
+
+            this.physics.add.collider(powerUp, this.platforms);
+
+            // top spawner
+            if ("setVelocityX" in powerUp.body!) {
+                powerUp.body.setVelocityX(-100);
+            }
+
+            this.physics.add.overlap(this.player, powerUp, () => {
+                powerUp.destroy();
+                if ("setVelocity" in this.player.body!) {
+                    this.player.body.setVelocity(500, -1000);
+                }
+            });
+
+        });
 
         // Add keyboard inputs
         this.addKeys();
@@ -69,28 +92,6 @@ export default class GameScene extends Phaser.Scene {
 
     // Add keyboard input to the scene.
     addKeys(): void {
-
-        this.input.keyboard!.addKey('Space').on('down', function(this: GameScene) {
-            this.spaceEnterKey()
-        }, this);
-
-    }
-
-    // Action which happens when the enter or space key is pressed.
-    spaceEnterKey(): void {
-
-        const spawnposition = this.cameras.main.worldView.x + gameOptions.gameWidth / 2;
-
-        const powerup = this.add.sprite(spawnposition, 50, 'spritesheet', 2);
-        this.physics.add.existing(powerup, false);
-
-        powerup.body.setVelocityX(-100);
-
-        this.physics.add.collider(powerup, this.staticGroup);
-        this.physics.add.overlap(this.player, powerup, () => {
-            powerup.destroy();
-            this.player.body.setVelocity(500,-1000);
-        });
 
 
     }

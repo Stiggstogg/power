@@ -1,8 +1,11 @@
 import Phaser from 'phaser';
-import spongeImg from '../assets/images/sponge.jpeg';
 import WebFontFile from "../helper/WebFontFile";
 import gameOptions from "../helper/gameOptions";
 import spriteSheetImg from "../assets/images/Spritesheet.png";
+import tileSetImg from "../assets/images/1-Bit-Platformer-Tileset.png";
+import playerImg from "../assets/images/player.png";
+import powerUpImg from "../assets/images/powerup.png";
+import level1JSON from "../assets/levels/Level1.json";
 
 // "Loading" scene: Loads all assets and shows a progress bar while loading
 export default class LoadingScene extends Phaser.Scene {
@@ -60,13 +63,18 @@ export default class LoadingScene extends Phaser.Scene {
         }, this);
 
         // load images
-        //this.load.image('sponge', spongeImg);
+        this.load.image('tileSet', tileSetImg);
+        this.load.image('player', playerImg);
+        this.load.image('powerup', powerUpImg);
 
         // load audio
         //this.load.audio('miss', 'assets/audio/Pew.mp3');
 
         // load sprite sheet
         this.load.spritesheet('spritesheet', spriteSheetImg, {frameWidth: 64, frameHeight: 64});
+
+        // load tileset
+        this.load.tilemapTiledJSON('level1', level1JSON);
 
         // load fonts (with "webfontloader")
         this.load.addFile(new WebFontFile(this.load, 'Orbitron'));

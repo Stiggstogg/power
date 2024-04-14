@@ -21,11 +21,11 @@ const config: Phaser.Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     pixelArt: false,                                     // if true pixel perfect rendering is used
-    backgroundColor: '#cbdbfc',
+    backgroundColor: '#000000',
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 3000},
+            gravity: {x: 0, y: 3000},
             debug: false
         }
     },
