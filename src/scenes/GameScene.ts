@@ -1,12 +1,19 @@
 import Phaser from 'phaser';
 
 import gameOptions from "../helper/gameOptions";
+import {GameSceneData} from "../helper/interfaces";
+import Player from "../sprites/Player";
+import Spawner from "../sprites/Spawner";
+import PowerUp from "../sprites/PowerUp";
 
 // "Game" scene: Scene for the main game
 export default class GameScene extends Phaser.Scene {
 
     private platforms!: Phaser.Tilemaps.TilemapLayer;
-    private player!: Phaser.GameObjects.Sprite;
+    private player!: Player;
+    private spawner!: Spawner
+    private levelKey!: string;
+    private powerUpGroup!: Phaser.GameObjects.Group;
 
     // Constructor
     constructor() {
@@ -16,7 +23,9 @@ export default class GameScene extends Phaser.Scene {
     }
 
     /// Initialize parameters
-    init(): void {
+    init(data: GameSceneData): void {
+
+        this.levelKey = 'level' + data.level.toString();        // generate level key
 
     }
 
@@ -24,60 +33,18 @@ export default class GameScene extends Phaser.Scene {
     create(): void {
 
         // setup world
-        this.physics.world.bounds.width = gameOptions.gameWidth*2;
-        this.physics.world.bounds.height = gameOptions.gameHeight;
+        this.setupWorld();
 
-        // set the camera
-        this.cameras.main.setBounds(0, 0, gameOptions.gameWidth*2, gameOptions.gameHeight);       // set the camera boundaries (to the world size)
+        // setup objects
+        this.setupObjects();
 
-        // create map
-        const map = this.make.tilemap({
-            key: 'level1'
-        });
-        const tileSet = map.addTilesetImage('1-Bit Platformer', 'tileSet')!;
-        this.platforms = map.createLayer('Platformen', tileSet)!;
-        this.platforms.setCollisionByProperty({collides: true});
-
-        // create player
-        this.player = this.add.sprite(32, 150, 'player');
-        this.cameras.main.startFollow(this.player, true, 1, 1, -gameOptions.gameWidth / 2 + 64, 0);
-
-        // add physics
-        //this.staticGroup = this.physics.add.staticGroup([this.floor1, this.floor2, this.floor3]);
-        this.physics.add.existing(this.player, false);
-
-        // setup collisions and overlap
-        this.physics.add.collider(this.player, this.platforms);
-
-        // set speed of player
-        if ("setVelocityX" in this.player.body!) {
-            this.player.body.setVelocityX(100);
-        }
+        // let player move
+        this.player.move();
 
         // set pointer event
         this.input.on('pointerdown', () =>
         {
-
-            // top spawner
-            const spawnX = this.cameras.main.worldView.x + gameOptions.gameWidth / 2;
-            const spawnY = gameOptions.gameHeight * 0.1;
-
-            const powerUp = this.physics.add.sprite(spawnX, spawnY, 'powerup');
-
-            this.physics.add.collider(powerUp, this.platforms);
-
-            // top spawner
-            if ("setVelocityX" in powerUp.body!) {
-                powerUp.body.setVelocityX(-100);
-            }
-
-            this.physics.add.overlap(this.player, powerUp, () => {
-                powerUp.destroy();
-                if ("setVelocity" in this.player.body!) {
-                    this.player.body.setVelocity(500, -1000);
-                }
-            });
-
+            this.createPowerUp();
         });
 
         // Add keyboard inputs
@@ -88,11 +55,73 @@ export default class GameScene extends Phaser.Scene {
     // Update function for the game loop.
     update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
 
+        this.player.update();
+        this.spawner.update();
+
+        this.powerUpGroup.getChildren().forEach((powerUp) => {
+            powerUp.update();
+        });
+
     }
 
     // Add keyboard input to the scene.
     addKeys(): void {
 
+
+    }
+
+    // setup game objects, e.g. player
+    setupObjects(){
+
+        // setup the player
+        this.player = this.add.existing(new Player(this, gameOptions.playerStartPosition.x, gameOptions.playerStartPosition.y));            // create player
+        this.cameras.main.startFollow(this.player, true, 1, 1, -gameOptions.gameWidth / 2 + 64, 0);     // make camera follow player
+        this.physics.add.collider(this.player, this.platforms);                                                                             // setup collider with platforms
+
+        // setup spawner platform
+        this.spawner = this.add.existing(new Spawner(this, gameOptions.spawnerPosition.x, gameOptions.spawnerPosition.y, this.player));
+
+        // setup the power up group
+        this.powerUpGroup = this.add.group();
+
+    }
+
+    // setup the world parameters, camera, platforms and decorations
+    setupWorld() {
+
+        // get and create level
+        const map = this.make.tilemap({key: this.levelKey});                                // create a tile map
+        const tileSet = map.addTilesetImage('1BitPlatformer', 'tileSet')!;          // create a tileSet
+
+        map.createLayer('decorations', tileSet);                                                                 // create a new layer for the decorations
+
+        this.platforms = map.createLayer('platforms', tileSet)!;                                                 // create a new layer for the platforms
+        this.platforms.setCollisionByProperty({collides: true});                                               // set collisions for the platforms
+
+        // set world boundaries to tile map size
+        this.physics.world.bounds.width = map.widthInPixels;
+        this.physics.world.bounds.height = map.heightInPixels;
+
+        // set the camera
+        this.cameras.main.setBounds(0, 0, this.physics.world.bounds.width, this.physics.world.bounds.height);     // set the camera boundaries (to the world size)
+
+    }
+
+    // create power up
+    createPowerUp() {
+
+        // create power Up
+        const powerUp = this.add.existing(new PowerUp(this, this.spawner.x, this.spawner.y + 16, 'playerJump'));
+
+        // setup collision with platforms
+        this.physics.add.collider(powerUp, this.platforms);
+
+        // setup pick up by a player
+        this.physics.add.overlap(this.player, powerUp, () => {
+            powerUp.pickedUp();
+        });
+
+        this.powerUpGroup.add(powerUp);
 
     }
 

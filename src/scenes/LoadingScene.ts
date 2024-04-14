@@ -1,11 +1,14 @@
 import Phaser from 'phaser';
 import WebFontFile from "../helper/WebFontFile";
 import gameOptions from "../helper/gameOptions";
-import spriteSheetImg from "../assets/images/Spritesheet.png";
-import tileSetImg from "../assets/images/1-Bit-Platformer-Tileset.png";
 import playerImg from "../assets/images/player.png";
 import powerUpImg from "../assets/images/powerup.png";
+
+import tileSetImg from "../assets/images/1-Bit-Platformer-Tileset.png";
+
+// levels
 import level1JSON from "../assets/levels/Level1.json";
+import level2JSON from "../assets/levels/Level2.json";
 
 // "Loading" scene: Loads all assets and shows a progress bar while loading
 export default class LoadingScene extends Phaser.Scene {
@@ -63,18 +66,21 @@ export default class LoadingScene extends Phaser.Scene {
         }, this);
 
         // load images
-        this.load.image('tileSet', tileSetImg);
         this.load.image('player', playerImg);
         this.load.image('powerup', powerUpImg);
+
+        // load tile set image
+        this.load.image('tileSet', tileSetImg);
+
+        // load level tile maps (Tiled in JSON format)
+        this.load.tilemapTiledJSON('level1', level1JSON);
+        this.load.tilemapTiledJSON('level2', level2JSON);
 
         // load audio
         //this.load.audio('miss', 'assets/audio/Pew.mp3');
 
         // load sprite sheet
-        this.load.spritesheet('spritesheet', spriteSheetImg, {frameWidth: 64, frameHeight: 64});
-
-        // load tileset
-        this.load.tilemapTiledJSON('level1', level1JSON);
+        this.load.spritesheet('spriteSheet', tileSetImg, {frameWidth: 16, frameHeight: 16, spacing: 1});
 
         // load fonts (with "webfontloader")
         this.load.addFile(new WebFontFile(this.load, 'Orbitron'));
@@ -83,7 +89,36 @@ export default class LoadingScene extends Phaser.Scene {
 
     // Add the animations and change to "Home" scene, directly after loading
     create() {
-        this.scene.start('Game');
+
+        this.createAnimations();
+
+        this.scene.start('Game', {level: 2});
+    }
+
+    // create animations
+    createAnimations() {
+
+        // player animations
+        this.anims.create({
+            key: 'player-idle',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [240]}),
+            frameRate: 0
+        });
+
+        this.anims.create({
+            key: 'player-run',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [241, 242, 241, 243]}),
+            frameRate: 10,
+            yoyo: false,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'player-jump',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [244]}),
+            frameRate: 0
+        });
+
     }
 
 }
