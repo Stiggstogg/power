@@ -3,17 +3,17 @@ import Phaser from 'phaser';
 import gameOptions from "../helper/gameOptions";
 import {GameSceneData} from "../helper/interfaces";
 import Player from "../sprites/Player";
-import Spawner from "../sprites/Spawner";
 import PowerUp from "../sprites/PowerUp";
+import eventsCenter from "../helper/eventsCenter";
 
 // "Game" scene: Scene for the main game
 export default class GameScene extends Phaser.Scene {
 
     private platforms!: Phaser.Tilemaps.TilemapLayer;
     private player!: Player;
-    private spawner!: Spawner
     private levelKey!: string;
     private powerUpGroup!: Phaser.GameObjects.Group;
+    private gameData!: GameSceneData;
 
     // Constructor
     constructor() {
@@ -26,11 +26,15 @@ export default class GameScene extends Phaser.Scene {
     init(data: GameSceneData): void {
 
         this.levelKey = 'level' + data.level.toString();        // generate level key
+        this.gameData = data;
 
     }
 
     // Creates all objects of this scene
     create(): void {
+
+        // start UI scene
+        this.scene.launch('GameUI', this.gameData);
 
         // setup world
         this.setupWorld();
@@ -41,10 +45,9 @@ export default class GameScene extends Phaser.Scene {
         // let player move
         this.player.move();
 
-        // set pointer event
-        this.input.on('pointerdown', () =>
-        {
-            this.createPowerUp();
+        // set spawn power up event
+        eventsCenter.on('spawnPowerUp', (x: number, y: number, effect: string) => {
+           this.createPowerUp(x, y, effect);
         });
 
         // Add keyboard inputs
@@ -56,7 +59,6 @@ export default class GameScene extends Phaser.Scene {
     update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
 
         this.player.update();
-        this.spawner.update();
 
         this.powerUpGroup.getChildren().forEach((powerUp) => {
             powerUp.update();
@@ -77,9 +79,6 @@ export default class GameScene extends Phaser.Scene {
         this.player = this.add.existing(new Player(this, gameOptions.playerStartPosition.x, gameOptions.playerStartPosition.y));            // create player
         this.cameras.main.startFollow(this.player, true, 1, 1, -gameOptions.gameWidth / 2 + 64, 0);     // make camera follow player
         this.physics.add.collider(this.player, this.platforms);                                                                             // setup collider with platforms
-
-        // setup spawner platform
-        this.spawner = this.add.existing(new Spawner(this, gameOptions.spawnerPosition.x, gameOptions.spawnerPosition.y, this.player));
 
         // setup the power up group
         this.powerUpGroup = this.add.group();
@@ -108,10 +107,14 @@ export default class GameScene extends Phaser.Scene {
     }
 
     // create power up
-    createPowerUp() {
+    createPowerUp(x: number, y: number, effect: string) {
+
+        // calculate from screen coordinates to world coordinates
+        const worldX = this.cameras.main.worldView.x + x + gameOptions.spawnerPowerUpOffset.x;
+        const worldY = this.cameras.main.worldView.y + y + gameOptions.spawnerPowerUpOffset.y;
 
         // create power Up
-        const powerUp = this.add.existing(new PowerUp(this, this.spawner.x, this.spawner.y + 16, 'playerJump'));
+        const powerUp = this.add.existing(new PowerUp(this, worldX, worldY, effect));
 
         // setup collision with platforms
         this.physics.add.collider(powerUp, this.platforms);

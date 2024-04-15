@@ -1,17 +1,12 @@
 // spawner class
 
-import Player from "./Player";
-
 export default class Spawner extends Phaser.GameObjects.Container {
 
     private spawnGuy: Phaser.GameObjects.Image;
-    private player: Player;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, player: Player) {
+    constructor(scene: Phaser.Scene, x: number, y: number) {
 
         super(scene, x, y);
-
-        this.player = player;
 
         // add images to container
         const pipe = new Phaser.GameObjects.Image(scene, 0, 5, 'spriteSheet', 247);
@@ -33,9 +28,6 @@ export default class Spawner extends Phaser.GameObjects.Container {
     update() {
         super.update();
 
-        if ('setVelocityX' in this.body!) {
-            this.body!.setVelocityX(this.player.body!.velocity.x);   // set speed to the same speed as the player (needs to be set with if statement, because it could be null (TypeScript)
-        }
 
     }
 
