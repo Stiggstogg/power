@@ -14,6 +14,7 @@ export default class GameScene extends Phaser.Scene {
     private levelKey!: string;
     private powerUpGroup!: Phaser.GameObjects.Group;
     private gameData!: GameSceneData;
+    private instructionText!: Phaser.GameObjects.BitmapText;
 
     // Constructor
     constructor() {
@@ -43,11 +44,11 @@ export default class GameScene extends Phaser.Scene {
         this.setupObjects();
 
         // let player move
-        this.player.move();
+        //this.player.move();
 
-        // set spawn power up event
-        eventsCenter.on('spawnPowerUp', (x: number, y: number, effect: string) => {
-           this.createPowerUp(x, y, effect);
+        // set spawn power up event (when button is pressed)
+        eventsCenter.on('spawnPowerUp', (x: number, y: number, puType: string) => {
+           this.createPowerUp(x, y, puType);
         });
 
         // Add keyboard inputs
@@ -92,10 +93,21 @@ export default class GameScene extends Phaser.Scene {
         const map = this.make.tilemap({key: this.levelKey});                                // create a tile map
         const tileSet = map.addTilesetImage('1BitPlatformer', 'tileSet')!;          // create a tileSet
 
-        map.createLayer('decorations', tileSet);                                                                 // create a new layer for the decorations
-
+        // platforms
         this.platforms = map.createLayer('platforms', tileSet)!;                                                 // create a new layer for the platforms
         this.platforms.setCollisionByProperty({collides: true});                                               // set collisions for the platforms
+
+        // add the instruction text
+
+        const mapProperties: any = map.properties;      // get the map properties (it is an array, but for simplicity and to avoid type errors I just used "any")
+
+        for (let i = 0; i < mapProperties.length; i++) {
+            if (mapProperties[i].name == 'instructions') {
+                this.instructionText = this.add.bitmapText(gameOptions.gameWidth * 0.05, gameOptions.gameHeight * 0.1, 'minogram', mapProperties[i].value,10);
+                this.instructionText.setMaxWidth(gameOptions.gameWidth * 0.2);
+                break;
+            }
+        }
 
         // set world boundaries to tile map size
         this.physics.world.bounds.width = map.widthInPixels;
@@ -114,7 +126,7 @@ export default class GameScene extends Phaser.Scene {
         const worldY = this.cameras.main.worldView.y + y + gameOptions.spawnerPowerUpOffset.y;
 
         // create power Up
-        const powerUp = this.add.existing(new PowerUp(this, worldX, worldY, effect));
+        const powerUp = this.add.existing(new PowerUp(this, worldX, worldY, effect, this.player));
 
         // setup collision with platforms
         this.physics.add.collider(powerUp, this.platforms);

@@ -42,7 +42,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     }
 
-    jump() {
+    fly() {
 
         this.setVelocity(gameOptions.playerSpeed + gameOptions.playerJumpSpeed.x, -gameOptions.playerJumpSpeed.y);
         this.isJumping = true;
@@ -52,8 +52,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     setupPickUpEvents() {
 
-        eventsCenter.on('playerJump', () => {
-           this.jump();
+        eventsCenter.on('powerUpPickedUp', (puType: string) => {
+
+            switch (puType) {
+                case 'Fly':
+                    this.fly();
+                    break;
+                case 'Speed':
+                    console.log('SPEEEED!');        // TODO: Replace with real action
+                    break;
+                case 'Shoot':
+                    console.log('SHOOOT!');         // TODO: Replace with real action
+                    break;
+            }
+
         });
 
     }

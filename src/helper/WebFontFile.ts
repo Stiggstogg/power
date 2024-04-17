@@ -46,6 +46,12 @@ export default class WebFontFile extends Phaser.Loader.File {
                     families: this.fontNames                        // add fonts to the 'google' config
                 }
                 break
+            case 'custom':                                          // add a custom font
+                config['custom'] = {
+                    families: ['Kenney Pixel'],
+                    urls:['style.css']
+                }
+                break
             default:
                 throw new Error('Unsupported font service')         // throw error if the service is not supported
         }

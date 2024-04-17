@@ -65,6 +65,27 @@
  "nextlayerid":3,
  "nextobjectid":1,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"flyNumber",
+         "type":"int",
+         "value":1
+        }, 
+        {
+         "name":"instructions",
+         "type":"string",
+         "value":"This is the instruction of map 2"
+        }, 
+        {
+         "name":"shootNumber",
+         "type":"int",
+         "value":0
+        }, 
+        {
+         "name":"speedNumber",
+         "type":"int",
+         "value":1
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
  "tileheight":16,

@@ -15,6 +15,9 @@ class GameOptions {
     public readonly gravity: Phaser.Math.Vector2;
     public readonly spawnerPosition: Phaser.Math.Vector2;
     public readonly spawnerPowerUpOffset: Phaser.Math.Vector2;
+    public readonly iconNumberFly: number;
+    public readonly iconNumberSpeed: number;
+    public readonly iconNumberShoot: number;
 
     constructor() {
 
@@ -44,6 +47,9 @@ class GameOptions {
 
         // PowerUp
         this.powerUpSpeed = 150;
+        this.iconNumberFly = 7;         // number of the icon for this power up in the spritesheet
+        this.iconNumberSpeed = 10;
+        this.iconNumberShoot = 8;
 
         // ---------------------
         // Text styles

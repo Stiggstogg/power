@@ -65,6 +65,27 @@
  "nextlayerid":6,
  "nextobjectid":1,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"flyNumber",
+         "type":"string",
+         "value":"1"
+        }, 
+        {
+         "name":"instructions",
+         "type":"string",
+         "value":"This is an example text and explains the map!"
+        }, 
+        {
+         "name":"shootNumber",
+         "type":"string",
+         "value":"0"
+        }, 
+        {
+         "name":"speedNumber",
+         "type":"string",
+         "value":"0"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
  "tileheight":16,

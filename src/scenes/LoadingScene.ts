@@ -1,14 +1,18 @@
 import Phaser from 'phaser';
-import WebFontFile from "../helper/WebFontFile";
+//import WebFontFile from "../helper/WebFontFile";
 import gameOptions from "../helper/gameOptions";
 import playerImg from "../assets/images/player.png";
 import powerUpImg from "../assets/images/powerup.png";
-
 import tileSetImg from "../assets/images/1-Bit-Platformer-Tileset.png";
 
 // levels
 import level1JSON from "../assets/levels/Level1.json";
 import level2JSON from "../assets/levels/Level2.json";
+
+// fonts
+import minogramPNG from "../assets/fonts/minogram.png";
+// @ts-ignore: Suppress this TS error message, as in vite the config (assetsInclude: ['**/*.xml']) is setup in a way that xml files are handled as static assets
+import minogramXML from "../assets/fonts/minogram.xml";
 
 // "Loading" scene: Loads all assets and shows a progress bar while loading
 export default class LoadingScene extends Phaser.Scene {
@@ -83,7 +87,10 @@ export default class LoadingScene extends Phaser.Scene {
         this.load.spritesheet('spriteSheet', tileSetImg, {frameWidth: 16, frameHeight: 16, spacing: 1});
 
         // load fonts (with "webfontloader")
-        this.load.addFile(new WebFontFile(this.load, 'Orbitron'));
+        //this.load.addFile(new WebFontFile(this.load, 'Orbitron'));
+        //this.load.addFile(new WebFontFile(this.load, 'Kenney Pixel', 'custom'));
+
+        this.load.bitmapFont('minogram', minogramPNG, minogramXML);
 
     }
 
