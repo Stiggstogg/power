@@ -17,12 +17,6 @@ export default class Spawner extends Phaser.GameObjects.Container {
 
         this.add([pipe, platform1, platform2, platform3, this.spawnGuy]);
 
-        // physics
-        scene.physics.add.existing(this);                   // add physics
-        if ('setVelocityX' in this.body!) {
-            this.body!.setAllowGravity(false);                  // do not apply gravity (needs to be set with if statement, because it could be null (TypeScript)
-        }
-
     }
 
     update() {

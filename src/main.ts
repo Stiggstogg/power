@@ -9,13 +9,14 @@ import HomeScene from './scenes/HomeScene';
 import GameScene from './scenes/GameScene';
 import gameOptions from "./helper/gameOptions";
 import GameUIScene from "./scenes/GameUIScene";
+import WinScene from "./scenes/WinScene";
 
 // Phaser 3 config
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: gameOptions.gameWidth,
     height: gameOptions.gameHeight,
-    scene: [BootScene, LoadingScene, HomeScene, GameScene, GameUIScene],
+    scene: [BootScene, LoadingScene, HomeScene, GameScene, GameUIScene, WinScene],
     title: 'Power',                  // Shown in the console
     scale: {
         mode: Phaser.Scale.FIT,
@@ -27,7 +28,7 @@ const config: Phaser.Types.Core.GameConfig = {
         default: 'arcade',
         arcade: {
             gravity: gameOptions.gravity,
-            debug: false
+            debug: true
         }
     }
 };

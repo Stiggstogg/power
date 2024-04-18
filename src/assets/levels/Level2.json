@@ -61,15 +61,38 @@
          "width":120,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":4,
+         "name":"exit",
+         "objects":[
+                {
+                 "gid":59,
+                 "height":16,
+                 "id":1,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":400,
+                 "y":288
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":3,
- "nextobjectid":1,
+ "nextlayerid":5,
+ "nextobjectid":2,
  "orientation":"orthogonal",
  "properties":[
         {
          "name":"flyNumber",
-         "type":"int",
-         "value":1
+         "type":"string",
+         "value":"1"
         }, 
         {
          "name":"instructions",
@@ -78,13 +101,13 @@
         }, 
         {
          "name":"shootNumber",
-         "type":"int",
-         "value":0
+         "type":"string",
+         "value":"0"
         }, 
         {
          "name":"speedNumber",
-         "type":"int",
-         "value":1
+         "type":"string",
+         "value":"1"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

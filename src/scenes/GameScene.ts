@@ -15,6 +15,7 @@ export default class GameScene extends Phaser.Scene {
     private powerUpGroup!: Phaser.GameObjects.Group;
     private gameData!: GameSceneData;
     private instructionText!: Phaser.GameObjects.BitmapText;
+    private exit!: Phaser.Physics.Arcade.Image;
 
     // Constructor
     constructor() {
@@ -26,13 +27,16 @@ export default class GameScene extends Phaser.Scene {
     /// Initialize parameters
     init(data: GameSceneData): void {
 
-        this.levelKey = 'level' + data.level.toString();        // generate level key
+        this.levelKey = 'Level ' + data.level.toString();        // generate level key
         this.gameData = data;
 
     }
 
     // Creates all objects of this scene
     create(): void {
+
+        // increase the number of attempts
+        this.gameData.attempts++;
 
         // start UI scene
         this.scene.launch('GameUI', this.gameData);
@@ -44,7 +48,7 @@ export default class GameScene extends Phaser.Scene {
         this.setupObjects();
 
         // let player move
-        //this.player.move();
+        this.player.move();
 
         // set spawn power up event (when button is pressed)
         eventsCenter.on('spawnPowerUp', (x: number, y: number, puType: string) => {
@@ -73,6 +77,29 @@ export default class GameScene extends Phaser.Scene {
 
     }
 
+    nextLevel() {
+
+        // create the game data for the next level
+        const newGameData: GameSceneData = {
+            level: this.gameData.level + 1,
+            attempts: this.gameData.attempts
+        }
+
+        if (this.gameData.level >= gameOptions.maxLevel) {
+
+            this.scene.stop('GameUI');                  // stop game ui scene
+            this.scene.start('Win', newGameData);       // show win screen
+
+        }
+        else {
+
+            this.scene.stop('GameUI');                  // stop game ui scene
+            this.scene.start('Game', newGameData);      // go to next level
+
+        }
+
+    }
+
     // setup game objects, e.g. player
     setupObjects(){
 
@@ -83,6 +110,11 @@ export default class GameScene extends Phaser.Scene {
 
         // setup the power up group
         this.powerUpGroup = this.add.group();
+
+        // setup collision with exit door
+        this.physics.add.overlap(this.player, this.exit, () => {
+            this.nextLevel();                                                                           // go to the next level when the player reaches the door
+        });
 
     }
 
@@ -97,8 +129,17 @@ export default class GameScene extends Phaser.Scene {
         this.platforms = map.createLayer('platforms', tileSet)!;                                                 // create a new layer for the platforms
         this.platforms.setCollisionByProperty({collides: true});                                               // set collisions for the platforms
 
-        // add the instruction text
+        // exit
+        const exitObjectLayer: any = map.getObjectLayer('exit');
+        const exitObject = exitObjectLayer.objects[0];                                                                  // get exit object from object layer
+        this.exit = this.physics.add.image(exitObject.x, exitObject.y, 'spriteSheet', 58).setOrigin(1);  // add the exit image
 
+        this.exit.setSize(this.exit.displayWidth * 0.2, this.exit.displayHeight);                                 // change the position of the body, so that the collision with the player is only triggered at the right side of the door
+        this.exit.setOffset(this.exit.displayWidth * 0.8, 0);
+
+        this.physics.add.collider(this.exit, this.platforms);                                                           // exit needs to collide with the platforms
+
+        // add the instruction text
         const mapProperties: any = map.properties;      // get the map properties (it is an array, but for simplicity and to avoid type errors I just used "any")
 
         for (let i = 0; i < mapProperties.length; i++) {

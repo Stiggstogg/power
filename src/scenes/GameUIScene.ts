@@ -10,6 +10,7 @@ export default class GameUIScene extends Phaser.Scene {
 
     private spawner!: Spawner
     private levelKey!: string;
+    private gameData!: GameSceneData;
 
     // Constructor
     constructor() {
@@ -21,8 +22,10 @@ export default class GameUIScene extends Phaser.Scene {
     /// Initialize parameters
     init(data: GameSceneData): void {
 
-        this.levelKey = 'level' + data.level.toString();        // generate level key
+        this.levelKey = 'Level ' + data.level.toString();        // generate level key
         console.log(this.levelKey);                             // TODO: Remove later, was only added to not have an "unused variable" error
+
+        this.gameData = data;
 
     }
 
@@ -70,6 +73,15 @@ export default class GameUIScene extends Phaser.Scene {
                     break;
             }
         }
+
+        // setup the level and attempts text
+        const textYPos = 0.025;
+
+        this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * textYPos, 'minogram',
+            'Level ' + this.gameData.level.toString() + '/' + gameOptions.maxLevel, 20).setOrigin(0.5, 0);
+
+        this.add.bitmapText(gameOptions.gameWidth * 0.05, gameOptions.gameHeight * textYPos, 'minogram',
+            'Attempts: ' + this.gameData.attempts.toString(), 20);
 
     }
 

@@ -10,9 +10,9 @@ import level1JSON from "../assets/levels/Level1.json";
 import level2JSON from "../assets/levels/Level2.json";
 
 // fonts
-import minogramPNG from "../assets/fonts/minogram.png";
+import minogramPNG from "../assets/fonts/minogram_6x10.png";         // from here: https://frostyfreeze.itch.io/pixel-bitmap-fonts-png-xml (CC0 licensed)
 // @ts-ignore: Suppress this TS error message, as in vite the config (assetsInclude: ['**/*.xml']) is setup in a way that xml files are handled as static assets
-import minogramXML from "../assets/fonts/minogram.xml";
+import minogramXML from "../assets/fonts/minogram_6x10.xml";
 
 // "Loading" scene: Loads all assets and shows a progress bar while loading
 export default class LoadingScene extends Phaser.Scene {
@@ -35,18 +35,18 @@ export default class LoadingScene extends Phaser.Scene {
     preload(): void {
 
         // show logo
-        this.add.sprite(gameOptions.gameWidth/2, gameOptions.gameHeight/2, 'logo').setScale(1, 1); // logo is already preloaded in 'Boot' scene
+        this.add.sprite(gameOptions.gameWidth/2, gameOptions.gameHeight/2, 'logo').setScale(0.5); // logo is already preloaded in 'Boot' scene
 
         // text
         this.add.text(gameOptions.gameWidth/2, gameOptions.gameHeight * 0.20, 'CLOWNGAMING', {fontSize: '70px', color: '#FFFF00', fontStyle: 'bold'}).setOrigin(0.5);
-        this.add.text(gameOptions.gameWidth/2, gameOptions.gameHeight * 0.73, 'Loading', {fontSize: '30px', color: '#27FF00'}).setOrigin(0.5);
+        this.add.text(gameOptions.gameWidth/2, gameOptions.gameHeight * 0.8, 'Loading...', {fontSize: '30px', color: '#27FF00'}).setOrigin(0.5);
 
         // progress bar background (e.g grey)
         const bgBar = this.add.graphics();
-        const barW = gameOptions.gameWidth * 0.3;            // progress bar width
-        const barH = barW * 0.1;          // progress bar height
+        const barW = gameOptions.gameWidth * 0.5;            // progress bar width
+        const barH = barW * 0.05;          // progress bar height
         const barX = gameOptions.gameWidth / 2 - barW / 2;       // progress bar x coordinate (origin is 0, 0)
-        const barY = gameOptions.gameHeight * 0.8 - barH / 2   // progress bar y coordinate (origin is 0, 0)
+        const barY = gameOptions.gameHeight * 0.9 - barH / 2   // progress bar y coordinate (origin is 0, 0)
         bgBar.setPosition(barX, barY);
         bgBar.fillStyle(0xF5F5F5, 1);
         bgBar.fillRect(0, 0, barW, barH);    // position is 0, 0 as it was already set with ".setPosition()"
@@ -77,8 +77,16 @@ export default class LoadingScene extends Phaser.Scene {
         this.load.image('tileSet', tileSetImg);
 
         // load level tile maps (Tiled in JSON format)
-        this.load.tilemapTiledJSON('level1', level1JSON);
-        this.load.tilemapTiledJSON('level2', level2JSON);
+        const levelArray = [            // put in here all the paths to the level json files
+            level1JSON,
+            level2JSON
+        ];
+
+        gameOptions.maxLevel = levelArray.length;           // set the number of maximum levels
+
+        for (let i = 0; i < levelArray.length; i++) {
+            this.load.tilemapTiledJSON('Level ' + (i + 1).toString(), levelArray[i]);     // load each level
+        }
 
         // load audio
         //this.load.audio('miss', 'assets/audio/Pew.mp3');
@@ -99,7 +107,11 @@ export default class LoadingScene extends Phaser.Scene {
 
         this.createAnimations();
 
-        this.scene.start('Game', {level: 2});
+        // TODO: Replace with jump to menu and put this into menu scene
+        this.scene.start('Game', {
+            level: 1,
+            attempts: 0                         // always start with 0, as at the beginning of the level the number of attempts will be increased by one
+        });
     }
 
     // create animations

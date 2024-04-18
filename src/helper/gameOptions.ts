@@ -18,6 +18,7 @@ class GameOptions {
     public readonly iconNumberFly: number;
     public readonly iconNumberSpeed: number;
     public readonly iconNumberShoot: number;
+    public maxLevel: number;
 
     constructor() {
 
@@ -64,6 +65,12 @@ class GameOptions {
             color: '#FFE500',
             fontStyle: 'bold'
         });
+
+        // ---------------------
+        // Miscellaneous
+        // ---------------------
+
+        this.maxLevel = 1;          // set maximum level (start value, will be changed on loading)
 
     }
 

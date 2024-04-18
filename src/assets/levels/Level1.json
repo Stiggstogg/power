@@ -61,9 +61,32 @@
          "width":80,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":7,
+         "name":"exit",
+         "objects":[
+                {
+                 "gid":59,
+                 "height":16,
+                 "id":5,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":128,
+                 "y":256
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":6,
- "nextobjectid":1,
+ "nextlayerid":8,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "properties":[
         {
