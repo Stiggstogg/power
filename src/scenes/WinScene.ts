@@ -34,6 +34,11 @@ export default class WinScene extends Phaser.Scene {
         // Add keyboard inputs
         this.addKeys();
 
+        // change back to menu
+        this.input.on('pointerdown', () => {
+            this.scene.start('Home');
+        })
+
     }
 
     // Update function for the game loop.
