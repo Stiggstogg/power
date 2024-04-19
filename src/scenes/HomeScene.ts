@@ -4,16 +4,11 @@ import gameOptions from "../helper/gameOptions";
 // "Home" scene: Main game menu scene
 export default class HomeScene extends Phaser.Scene {
 
-    private title!: Phaser.GameObjects.Text;
+    private title!: Phaser.GameObjects.BitmapText;
     private titleText!: string;
     private menuEntries!: string[];
-    private instructionText!: string;
-    private titleStyle!: Phaser.Types.GameObjects.Text.TextStyle;
-    private inactiveStyle!: Phaser.Types.GameObjects.Text.TextStyle;
-    private activeStyle!: Phaser.Types.GameObjects.Text.TextStyle;
-    private instructionStyle!: Phaser.Types.GameObjects.Text.TextStyle;
     private selected!: number;
-    private items!: Phaser.GameObjects.Text[];
+    private items!: Phaser.GameObjects.BitmapText[];
 
 
     // Constructor
@@ -27,44 +22,14 @@ export default class HomeScene extends Phaser.Scene {
     init(): void {
 
         // title text
-        this.titleText = 'My Game';
+        this.titleText = 'POWER UP ADVENTURE';
 
         // menu entries
         this.menuEntries = [
-            'Start',
-            'How to Play',
+            'Play',
             'Credits'
         ];
 
-        // instruction text
-        this.instructionText = 'Use arrow keys or W, A, S, D to select\nUse [SPACE] or [ENTER] to confirm';
-
-        // styles of the title menu entries (active or inactive) and instruction text
-        this.titleStyle = {
-            fontFamily: 'Orbitron',
-            fontSize: '70px',
-            color: '#FFFF00',
-            fontStyle: 'bold'
-        }
-
-        this.inactiveStyle = {
-            fontFamily: 'Arial',
-            fontSize: '40px',
-            color: '#ffff00',
-            fontStyle: '',
-        }
-
-        this.activeStyle = {
-            fontFamily: 'Arial',
-            fontSize: '50px',
-            color: '#0000ff',
-            fontStyle: 'bold',
-        }
-
-        this.instructionStyle = {
-            font: '20px Arial',
-            color: '#27ff00'
-        }
 
         // initialize empty parameters
         this.selected = 0;
@@ -76,10 +41,7 @@ export default class HomeScene extends Phaser.Scene {
     create(): void {
 
         // Title
-        this.title = this.add.text(gameOptions.gameWidth / 2, gameOptions.gameHeight * 0.2, this.titleText, this.titleStyle).setOrigin(0.5, 0.5);
-
-        // Instruction / press key text
-        this.add.text(gameOptions.gameWidth / 2, gameOptions.gameHeight - 46, this.instructionText, this.instructionStyle).setOrigin(0.5);
+        this.title = this.add.bitmapText(gameOptions.gameWidth / 2, gameOptions.gameHeight * 0.2, 'minogram', this.titleText, 50).setOrigin(0.5, 0.5);
 
         // Create the menu with its entries
         this.createMenu(this.menuEntries);
@@ -93,13 +55,13 @@ export default class HomeScene extends Phaser.Scene {
     createMenu(menuEntries: string[]): void {
 
         // start position and y space between the entries
-        const start = {x: gameOptions.gameWidth / 2, y: this.title.y + gameOptions.gameHeight * 0.2};      // start position
-        const ySpace = gameOptions.gameHeight * 0.1;                                         // ySpace between the entries
+        const start = {x: gameOptions.gameWidth / 2, y: this.title.y + gameOptions.gameHeight * 0.3};      // start position
+        const ySpace = gameOptions.gameHeight * 0.2;                                         // ySpace between the entries
 
         // create menu items (loop through each item)
         for (let i = 0;i < menuEntries.length; i++) {
 
-            const item = this.add.text(start.x, start.y + i * ySpace, menuEntries[i]).setOrigin(0.5);
+            const item = this.add.bitmapText(start.x, start.y + i * ySpace, 'minogram' , menuEntries[i], 30).setOrigin(0.5);
 
             item.setInteractive();          // set interactive
 
@@ -164,10 +126,12 @@ export default class HomeScene extends Phaser.Scene {
     highlightSelected(): void {
 
         for (let i in this.items) {
-            this.items[i].setStyle(this.inactiveStyle);         // change the style of all entries to the inactive style
+            this.items[i].clearTint();         // change the style of all entries to the inactive style
+            this.items[i].setFontSize(30);
         }
 
-        this.items[this.selected].setStyle(this.activeStyle);   // change the style of the selected entry to the active style
+        this.items[this.selected].setTint(0xb8f818);   // change the style of the selected entry to the active style
+        this.items[this.selected].setFontSize(40);
 
     }
 
@@ -191,16 +155,16 @@ export default class HomeScene extends Phaser.Scene {
 
         switch(this.selected) {
             case 0:                 // start the game when the first entry is selected ("Start")
-                this.scene.start('Game');
+                this.scene.start('Game', {
+                    level: 1,
+                    attempts: 0                         // always start with 0, as at the beginning of the level the number of attempts will be increased by one
+                });
                 break;
             case 1:                 // start the "Howto" scene when the "How To Play" entry is selected
-                console.log("HowTo");
+                console.log("Credits");
                 break;
             case 2:                 // start the "Credits" scene when the "How To Play" entry is selected
                 console.log("Credits");
-                break;
-            default:
-                this.scene.start('Game');   // start the game by default
                 break;
         }
 

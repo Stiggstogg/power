@@ -1,5 +1,7 @@
 // spawner class
 
+import gameOptions from "../helper/gameOptions";
+
 export default class Spawner extends Phaser.GameObjects.Container {
 
     private spawnGuy: Phaser.GameObjects.Image;
@@ -14,6 +16,7 @@ export default class Spawner extends Phaser.GameObjects.Container {
         const platform2 = new Phaser.GameObjects.Image(scene, 0, 0, 'spriteSheet', 65);
         const platform3 = new Phaser.GameObjects.Image(scene, 16, 0, 'spriteSheet', 66);
         this.spawnGuy = new Phaser.GameObjects.Image(scene, 0, -16, 'spriteSheet', 285);
+        this.spawnGuy.setTint(gameOptions.youColor);
 
         this.add([pipe, platform1, platform2, platform3, this.spawnGuy]);
 

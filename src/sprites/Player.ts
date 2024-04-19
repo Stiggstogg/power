@@ -17,6 +17,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.play('player-idle');
         this.isJumping = false;
 
+        // set the color
+        this.setTint(gameOptions.playerColor);
+
         // setup event listeners for power up pickup
         this.setupPickUpEvents();
 

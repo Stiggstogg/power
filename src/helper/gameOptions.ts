@@ -19,6 +19,9 @@ class GameOptions {
     public readonly iconNumberSpeed: number;
     public readonly iconNumberShoot: number;
     public maxLevel: number;
+    public readonly playerColor: number;
+    public readonly youColor: number;
+    public readonly enemyColor: number;
 
     constructor() {
 
@@ -38,12 +41,12 @@ class GameOptions {
         // ---------------------
 
         // Player
-        this.playerStartPosition = new Vector2(32, 150);
+        this.playerStartPosition = new Vector2(this.gameWidth * 0.1, this.gameHeight * 0.74);
         this.playerSpeed = 100;
         this.playerJumpSpeed = new Vector2(50, 400);
 
         // Spawner
-        this.spawnerPosition = new Vector2(this.gameWidth / 2, this.gameHeight * 0.2);
+        this.spawnerPosition = new Vector2(this.gameWidth / 2, this.gameHeight * 0.20);
         this.spawnerPowerUpOffset = new Vector2(0, 16);                                 // offset of the point were power ups are spawned relative to the spawners position
 
         // PowerUp
@@ -65,6 +68,14 @@ class GameOptions {
             color: '#FFE500',
             fontStyle: 'bold'
         });
+
+        // ---------------------
+        // Colors
+        // ---------------------
+
+        this.playerColor = 0x0078f8;
+        this.youColor = 0x00a800;
+        this.enemyColor = 0xe45c10;
 
         // ---------------------
         // Miscellaneous

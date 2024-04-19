@@ -1,13 +1,12 @@
 import Phaser from 'phaser';
 //import WebFontFile from "../helper/WebFontFile";
 import gameOptions from "../helper/gameOptions";
-import playerImg from "../assets/images/player.png";
-import powerUpImg from "../assets/images/powerup.png";
 import tileSetImg from "../assets/images/1-Bit-Platformer-Tileset.png";
+import letsgoImg from "../assets/images/letsgo.png";
 
 // levels
 import level1JSON from "../assets/levels/Level1.json";
-import level2JSON from "../assets/levels/Level2.json";
+//import level2JSON from "../assets/levels/Level2.json";
 
 // fonts
 import minogramPNG from "../assets/fonts/minogram_6x10.png";         // from here: https://frostyfreeze.itch.io/pixel-bitmap-fonts-png-xml (CC0 licensed)
@@ -70,8 +69,7 @@ export default class LoadingScene extends Phaser.Scene {
         }, this);
 
         // load images
-        this.load.image('player', playerImg);
-        this.load.image('powerup', powerUpImg);
+        this.load.image('letsgo', letsgoImg);
 
         // load tile set image
         this.load.image('tileSet', tileSetImg);
@@ -79,7 +77,7 @@ export default class LoadingScene extends Phaser.Scene {
         // load level tile maps (Tiled in JSON format)
         const levelArray = [            // put in here all the paths to the level json files
             level1JSON,
-            level2JSON
+            //level2JSON
         ];
 
         gameOptions.maxLevel = levelArray.length;           // set the number of maximum levels
@@ -106,12 +104,9 @@ export default class LoadingScene extends Phaser.Scene {
     create() {
 
         this.createAnimations();
+        this.scene.start('Home');
+        //this.scene.start('Game', {level: 1, attempts: 0});
 
-        // TODO: Replace with jump to menu and put this into menu scene
-        this.scene.start('Game', {
-            level: 1,
-            attempts: 0                         // always start with 0, as at the beginning of the level the number of attempts will be increased by one
-        });
     }
 
     // create animations
