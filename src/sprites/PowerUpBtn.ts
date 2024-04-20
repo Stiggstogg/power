@@ -11,6 +11,7 @@ export default class PowerUpBtn extends Phaser.GameObjects.Container {
     private remainingCount: number;
     private remaining: Phaser.GameObjects.BitmapText;
     private readonly spawner: Spawner;
+    private interactive: boolean;
 
     constructor(scene: Phaser.Scene, x: number, y:number, puType: string, remainingCount: number, spawner: Spawner) {
 
@@ -20,6 +21,7 @@ export default class PowerUpBtn extends Phaser.GameObjects.Container {
         this.puType = puType;
         this.remainingCount = remainingCount;
         this.spawner = spawner;                 // spawner is needed, as the button will provide where the spawner currently is (where the power up needs to be spawned)
+        this.interactive = false;                    // button is not interactive at the beginning
 
         // choose the icon type (number from the spritesheet)
         let iconNumber = 0;
@@ -43,10 +45,6 @@ export default class PowerUpBtn extends Phaser.GameObjects.Container {
 
         this.add([this.icon, title, this.remaining]);
 
-        // make the icon interactive
-        this.icon.setInteractive();
-        this.icon.on('pointerdown', () => {this.click()});
-
         // do not show the container if there are no power ups remaining
         if (this.remainingCount == 0) {
             this.setVisible(false);
@@ -63,17 +61,30 @@ export default class PowerUpBtn extends Phaser.GameObjects.Container {
     // action when the button is clicked
     click() {
 
-        // Check if there are remaining power ups and only do something if there are
-        if (this.remainingCount > 0) {
+        if (this.interactive) {         // only do something if the button is really active (needed for keyboard clicks, as it executes this function)
 
-            // reduce the remaining counter and text
-            this.remainingCount--;
-            this.remaining.setText(this.remainingCount.toString() + 'x');
+            // Check if there are remaining power ups and only do something if there are
+            if (this.remainingCount > 0) {
 
-            // emit an event that the button was pressed
-            eventsCenter.emit('spawnPowerUp', this.spawner.x, this.spawner.y, this.puType);
+                // reduce the remaining counter and text
+                this.remainingCount--;
+                this.remaining.setText(this.remainingCount.toString() + 'x');
 
+                // emit an event that the button was pressed
+                eventsCenter.emit('spawnPowerUp', this.spawner.x, this.spawner.y, this.puType);
+
+            }
         }
+    }
+
+    // activate the button
+    activateBtn() {
+
+        this.icon.setInteractive();             // set the interactivity
+        this.interactive = true;                // set the interactive switch (to ensure the click is only executed when the button is active)
+
+        // add the icon click event (but not activate it yet, as it will only be activated when the game starts)
+        this.icon.on('pointerdown', () => {this.click()});
 
     }
 

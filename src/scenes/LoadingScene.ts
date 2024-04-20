@@ -2,11 +2,13 @@ import Phaser from 'phaser';
 //import WebFontFile from "../helper/WebFontFile";
 import gameOptions from "../helper/gameOptions";
 import tileSetImg from "../assets/images/1-Bit-Platformer-Tileset.png";
-import letsgoImg from "../assets/images/letsgo.png";
 
 // levels
 import level1JSON from "../assets/levels/Level1.json";
-//import level2JSON from "../assets/levels/Level2.json";
+import level2JSON from "../assets/levels/Level2.json";
+import level3JSON from "../assets/levels/Level3.json";
+import level4JSON from "../assets/levels/Level4.json";
+import level5JSON from "../assets/levels/Level5.json";
 
 // fonts
 import minogramPNG from "../assets/fonts/minogram_6x10.png";         // from here: https://frostyfreeze.itch.io/pixel-bitmap-fonts-png-xml (CC0 licensed)
@@ -69,7 +71,6 @@ export default class LoadingScene extends Phaser.Scene {
         }, this);
 
         // load images
-        this.load.image('letsgo', letsgoImg);
 
         // load tile set image
         this.load.image('tileSet', tileSetImg);
@@ -77,7 +78,10 @@ export default class LoadingScene extends Phaser.Scene {
         // load level tile maps (Tiled in JSON format)
         const levelArray = [            // put in here all the paths to the level json files
             level1JSON,
-            //level2JSON
+            level2JSON,
+            level3JSON,
+            level4JSON,
+            level5JSON,
         ];
 
         gameOptions.maxLevel = levelArray.length;           // set the number of maximum levels
@@ -104,8 +108,8 @@ export default class LoadingScene extends Phaser.Scene {
     create() {
 
         this.createAnimations();
-        this.scene.start('Home');
-        //this.scene.start('Game', {level: 1, attempts: 0});
+        this.scene.start('Home');                         // TODO: change back to this at the end
+        //this.scene.start('Game', {level: 4, attempts: 0});
 
     }
 
@@ -128,9 +132,24 @@ export default class LoadingScene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'player-jump',
+            key: 'player-fly',
             frames: this.anims.generateFrameNames('spriteSheet', {frames: [244]}),
             frameRate: 0
+        });
+
+        this.anims.create({
+            key: 'player-speed',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [241, 242, 241, 243]}),
+            frameRate: 20,
+            yoyo: false,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'batEnemy-idle',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [383, 384]}),
+            frameRate: 10,
+            repeat: -1
         });
 
     }

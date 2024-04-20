@@ -5,20 +5,19 @@ import {GameSceneData} from "../helper/interfaces";
 import Player from "../sprites/Player";
 import PowerUp from "../sprites/PowerUp";
 import eventsCenter from "../helper/eventsCenter";
+import Enemy from "../sprites/Enemy";
 
 // "Game" scene: Scene for the main game
 export default class GameScene extends Phaser.Scene {
 
     private platforms!: Phaser.Tilemaps.TilemapLayer;
-    private spikes!: Phaser.Physics.Arcade.StaticGroup;
+    private enemies!: Phaser.GameObjects.Group;
     private player!: Player;
     private levelKey!: string;
     private powerUpGroup!: Phaser.GameObjects.Group;
     private gameData!: GameSceneData;
     private instructionText!: Phaser.GameObjects.BitmapText;
     private exit!: Phaser.Physics.Arcade.Image;
-    private letsgo!: Phaser.GameObjects.Image;
-    private letsgoText!: Phaser.GameObjects.BitmapText;
 
     // Constructor
     constructor() {
@@ -50,9 +49,6 @@ export default class GameScene extends Phaser.Scene {
         // setup objects
         this.setupObjects();
 
-        // let player move
-        //this.player.move();
-
         // setup event listeners
         this.setupEventListeners();
 
@@ -64,10 +60,17 @@ export default class GameScene extends Phaser.Scene {
     // Update function for the game loop.
     update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
 
+        // update player
         this.player.update();
 
+        // update power ups
         this.powerUpGroup.getChildren().forEach((powerUp) => {
             powerUp.update();
+        });
+
+        // update bat enemies
+        this.enemies.getChildren().forEach((enemy) => {
+            enemy.update();
         });
 
     }
@@ -75,6 +78,14 @@ export default class GameScene extends Phaser.Scene {
     // Add keyboard input to the scene.
     addKeys(): void {
 
+        // add keyboard controls
+        this.input.keyboard?.addKey('ENTER').once('down', () => {
+            this.startLevel();
+        });
+
+        this.input.keyboard?.addKey('SPACE').once('down', () => {
+            this.startLevel();
+        });
 
     }
 
@@ -127,9 +138,8 @@ export default class GameScene extends Phaser.Scene {
             this.endLevel('exit');                                                                           // go to the next level when the player reaches the door
         });
 
-        // setup player collision with spikes
-
-        this.physics.add.overlap(this.player, this.spikes, () => {
+        // setup player collision with enemies
+        this.physics.add.overlap(this.player, this.enemies, () => {
             this.endLevel('retry');                                                                           // go to the next level when the player reaches the door
         });
 
@@ -147,21 +157,14 @@ export default class GameScene extends Phaser.Scene {
 
         // platforms
         this.platforms = map.createLayer('platforms', tileSet)!;                                                 // create a new layer for the platforms
-        this.platforms.setCollisionByProperty({collides: true});                                               // set collisions for the platforms
+        this.platforms.setCollisionByProperty({collides: true});                                               // set collisions for the platformsg
 
         // enemies
         const enemiesObjects: any = map.getObjectLayer('enemies')!.objects;
-        this.spikes = this.physics.add.staticGroup();                                                                   // create a static spike group
+        this.enemies = this.add.group();
 
         for (let i = 0; i < enemiesObjects.length; i++) {
-
-            let spike = this.spikes.get(enemiesObjects[i].x, enemiesObjects[i].y, 'spriteSheet', 122);      // create a new spike
-            spike.setOrigin(1);
-            spike.refreshBody();
-            spike.setSize(spike.displayWidth, spike.displayHeight * 0.5);
-            spike.setOffset(0, spike.displayHeight * 0.5);
-            spike.setTint(gameOptions.enemyColor);
-
+            this.enemies.add(this.add.existing(new Enemy(this, enemiesObjects[i].x, enemiesObjects[i].y, enemiesObjects[i].type)));
         }
 
         // exit
@@ -179,8 +182,9 @@ export default class GameScene extends Phaser.Scene {
 
         for (let i = 0; i < mapProperties.length; i++) {
             if (mapProperties[i].name == 'instructions') {
-                this.instructionText = this.add.bitmapText(gameOptions.gameWidth * 0.02, gameOptions.gameHeight * 0.15, 'minogram', mapProperties[i].value,10);
+                this.instructionText = this.add.bitmapText(gameOptions.gameWidth * 0.02, gameOptions.gameHeight * 0.20, 'minogram', mapProperties[i].value,10);
                 this.instructionText.setMaxWidth(gameOptions.gameWidth * 0.35);
+                this.instructionText.setTint(gameOptions.textColor);
                 break;
             }
         }
@@ -192,16 +196,14 @@ export default class GameScene extends Phaser.Scene {
         // set the camera
         this.cameras.main.setBounds(0, 0, this.physics.world.bounds.width, this.physics.world.bounds.height);     // set the camera boundaries (to the world size)
 
-        // lets go button
-        this.letsgo = this.add.image(gameOptions.gameWidth * 0.02, gameOptions.gameHeight * 0.62, 'letsgo').setOrigin(0);
-        this.letsgo.setInteractive();
-
-        this.letsgoText = this.add.bitmapText(this.letsgo.x + this.letsgo.displayWidth / 2, this.letsgo.y + this.letsgo.displayHeight / 2 + gameOptions.gameHeight * 0.01, 'minogram', 'Let\'s go!', 20).setOrigin(0.5);
-        this.letsgoText.setTint(0x000000);
-
     }
 
     setupEventListeners() {
+
+        // set start event (click anywhere on the screen)
+        this.input.once('pointerdown', () => {
+            this.startLevel();
+        });
 
         // set spawn power up event (when button is pressed)
         eventsCenter.on('spawnPowerUp', (x: number, y: number, puType: string) => {
@@ -222,12 +224,6 @@ export default class GameScene extends Phaser.Scene {
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
             eventsCenter.off('spawnPowerUp');
             eventsCenter.off('powerUpPickedUp');
-        });
-
-        // setup event of lets go button
-        this.letsgo.on('pointerdown', () => {
-            this.player.move();
-            this.letsgo.destroy();
         });
 
     }
@@ -251,6 +247,20 @@ export default class GameScene extends Phaser.Scene {
         });
 
         this.powerUpGroup.add(powerUp);
+
+    }
+
+    // start the level
+    startLevel() {
+
+        // start the movement on the player
+        this.player.move();
+
+        // remove the instructions text
+        this.instructionText.destroy();
+
+        // emit the event that the level is started (for the UI scene to activate buttons)
+        eventsCenter.emit('startLevel');
 
     }
 
