@@ -38,9 +38,6 @@ export default class GameScene extends Phaser.Scene {
     // Creates all objects of this scene
     create(): void {
 
-        // increase the number of attempts
-        this.gameData.attempts++;
-
         // start UI scene
         this.scene.launch('GameUI', this.gameData);
 
@@ -67,8 +64,8 @@ export default class GameScene extends Phaser.Scene {
     // Update function for the game loop.
     update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
 
-        // update player
-        if (this.player != undefined) {
+        // update player (but only if both body and player are defined)
+        if (typeof this.player !== 'undefined' && typeof this.player.body !== 'undefined') {
             this.player.update();
         }
 
@@ -107,8 +104,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.cameras.main.fadeOut(gameOptions.fadeInOutTime);       // fade out the scene (this will trigger the cleanupLevel() method as soon as it is fully faded out
 
-        this.player.destroy();                                      // destroy the player
-
     }
 
     cleanupLevel() {
@@ -135,6 +130,7 @@ export default class GameScene extends Phaser.Scene {
                 break;
             }
             case 'retry': {                  // retry button was pressed
+                this.gameData.attempts++;       // // increase the number of attempts (Deaths)
                 this.scene.start('Game', this.gameData);
                 break;
             }
@@ -157,13 +153,14 @@ export default class GameScene extends Phaser.Scene {
         // setup player collision with exit door
         this.physics.add.overlap(this.player, this.exit, () => {
             this.sound.play('win');                                                         // play the win sound
+            this.player.end(false);
             this.endLevel('exit');                                                                           // go to the next level when the player reaches the door
         });
 
         // setup player collision with enemies
         this.physics.add.overlap(this.player, this.enemies, () => {
 
-            this.player.dead();
+            this.player.end(true);
 
             this.endLevel('retry');                                                                           // go to the next level when the player reaches the door
         });

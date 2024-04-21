@@ -36,6 +36,9 @@ export default class HomeScene extends Phaser.Scene {
         this.selected = 0;
         this.items = [];
 
+        // setup music and start it (if not already playing)
+        this.setupMusic();
+
     }
 
     // Shows the home screen and waits for the user to select a menu entry
@@ -183,6 +186,23 @@ export default class HomeScene extends Phaser.Scene {
             case 2:                 // start the "Credits" scene when the "How To Play" entry is selected
                 console.log("Credits");
                 break;
+        }
+
+    }
+
+    setupMusic() {
+
+        // setup music
+        const musicSound = this.sound.get('music');
+
+        if (musicSound == null) {        // add it to the sound manager if it isn't yet available
+            this.sound.add('music');
+        }
+
+
+        // setup music
+        if (!this.sound.get('music').isPlaying) {
+            this.sound.get('music').play({volume: 0.7, loop: true});
         }
 
     }

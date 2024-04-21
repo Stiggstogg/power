@@ -128,7 +128,7 @@ export default class GameUIScene extends Phaser.Scene {
             'Level ' + this.gameData.level.toString() + '/' + gameOptions.maxLevel, 20).setOrigin(0.5, 0.5).setTint(gameOptions.uiColor);
 
         this.add.bitmapText(gameOptions.gameWidth * 0.02, gameOptions.gameHeight * textYPos, 'minogram',
-            'Attempts: ' + this.gameData.attempts.toString(), 20).setOrigin(0, 0.5).setTint(gameOptions.uiColor);
+            'Deaths: ' + this.gameData.attempts.toString(), 20).setOrigin(0, 0.5).setTint(gameOptions.uiColor);
 
         // setup the exit and retry button
         this.retryBtn = this.add.image(gameOptions.gameWidth * 0.85, gameOptions.gameHeight * btnYPos, 'spriteSheet', 69).setScale(2).setOrigin(0.5).setInteractive();

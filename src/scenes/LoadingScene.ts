@@ -13,6 +13,7 @@ import speedSnd from "../assets/sounds/footstep_carpet_004.ogg";
 import deadSnd from "../assets/sounds/explosion4.ogg";
 import pickupSnd from "../assets/sounds/pickup2.ogg";
 import winSnd from "../assets/sounds/jingles-retro_02.ogg";
+import musicSnd from "../assets/sounds/power-music.mp3";
 
 
 // levels
@@ -112,6 +113,7 @@ export default class LoadingScene extends Phaser.Scene {
         this.load.audio('dead', deadSnd);
         this.load.audio('pickup', pickupSnd);
         this.load.audio('win', winSnd);
+        this.load.audio('music', musicSnd);
 
         // load sprite sheet
         this.load.spritesheet('spriteSheet', tileSetImg, {frameWidth: 16, frameHeight: 16, spacing: 1});

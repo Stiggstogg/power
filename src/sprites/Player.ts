@@ -48,6 +48,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     update() {
         super.update();
 
+        // check if the player is flying down and then remove the rocket and particles
         if (this.isFlying && this.isFlyingUp && this.body!.velocity.y > 0) {
 
             this.play('player-fly-down');
@@ -122,10 +123,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     }
 
-    dead() {
+    end(dead: boolean) {
 
-        // let the player explode
-        this.deadParticle.start();
+        if (dead) {
+
+            // let the player explode
+            this.deadParticle.start();
+
+            // play the dead sound
+            this.scene.sound.play('dead');
+
+        }
 
         // turn off all player sounds
         this.scene.sound.get('fly').stop();
@@ -133,9 +141,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         // turn off all particles
         this.flyParticle.stop();
-
-        // play the dead sound
-        this.scene.sound.play('dead');
 
         // destroy the player
         this.destroy();
