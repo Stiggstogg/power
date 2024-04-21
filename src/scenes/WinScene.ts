@@ -25,6 +25,9 @@ export default class WinScene extends Phaser.Scene {
     // Creates all objects of this scene
     create(): void {
 
+        // fade in
+        this.cameras.main.fadeIn(gameOptions.fadeInOutTime);
+
         // Show win text
         this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.5, 'minogram', 'YOU WIN!', 30).setOrigin(0.5);
 
@@ -34,10 +37,15 @@ export default class WinScene extends Phaser.Scene {
         // Add keyboard inputs
         this.addKeys();
 
-        // change back to menu
-        this.input.on('pointerdown', () => {
-            this.scene.start('Home');
+        // change back to menu (but first fade out)
+        this.input.once('pointerdown', () => {
+            this.cameras.main.fadeOut(gameOptions.fadeInOutTime);
         })
+
+        // change back to the menu when faded out
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('Home');
+        });
 
     }
 

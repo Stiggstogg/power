@@ -15,6 +15,11 @@ export default class GameUIScene extends Phaser.Scene {
     private flyBtn!: PowerUpBtn;
     private speedBtn!: PowerUpBtn;
     private shootBtn!: PowerUpBtn;
+    private retryBtn!: Phaser.GameObjects.Image;
+    private menuBtn!: Phaser.GameObjects.Image;
+    private lastButtonPress!: number;
+    private isCooldown!: boolean;
+    private isStarted!: boolean;
 
     // Constructor
     constructor() {
@@ -35,6 +40,18 @@ export default class GameUIScene extends Phaser.Scene {
     // Creates all objects of this scene
     create(): void {
 
+        // fade in
+        this.cameras.main.fadeIn(gameOptions.fadeInOutTime);
+
+        // initialize last button press timer to ensure the button can be pressed from the beginning
+        this.lastButtonPress = Date.now() - gameOptions.buttonCooldown;
+        this.isCooldown = false;
+        this.isStarted = false;     // switch to show if the level was already started
+
+        eventsCenter.on('startButtonCooldown', () => {      // start the cooldown if
+           this.startCooldown();
+        });
+
         // setup objects
         this.setupObjects();
 
@@ -46,12 +63,19 @@ export default class GameUIScene extends Phaser.Scene {
         // add the keyboard controls
         this.addKeys();
 
+        // event
+        eventsCenter.once('sceneFadeout', () => {
+            this.fadeOut();
+        });
+
     }
 
     // Update function for the game loop.
     update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
 
         this.spawner.update();
+
+        this.buttonCooldownCheck();
 
     }
 
@@ -60,7 +84,7 @@ export default class GameUIScene extends Phaser.Scene {
 
         // add keyboard controls
         this.input.keyboard?.addKey('A').on('down', () => {
-                this.flyBtn.click();        // "click" on the button
+            this.flyBtn.click();        // "click" on the button
         });
 
         // add keyboard controls
@@ -107,21 +131,17 @@ export default class GameUIScene extends Phaser.Scene {
             'Attempts: ' + this.gameData.attempts.toString(), 20).setOrigin(0, 0.5).setTint(gameOptions.uiColor);
 
         // setup the exit and retry button
-        const retryBtn = this.add.image(gameOptions.gameWidth * 0.85, gameOptions.gameHeight * btnYPos, 'spriteSheet', 69).setScale(2).setOrigin(0.5).setInteractive();
+        this.retryBtn = this.add.image(gameOptions.gameWidth * 0.85, gameOptions.gameHeight * btnYPos, 'spriteSheet', 69).setScale(2).setOrigin(0.5).setInteractive();
 
-        const menuBtn = this.add.image(gameOptions.gameWidth * 0.95, gameOptions.gameHeight * btnYPos, 'spriteSheet', 70).setScale(2).setOrigin(0.5).setInteractive();
+        this.menuBtn = this.add.image(gameOptions.gameWidth * 0.95, gameOptions.gameHeight * btnYPos, 'spriteSheet', 70).setScale(2).setOrigin(0.5).setInteractive();
 
-        retryBtn.on('pointerdown', () => {
+        this.retryBtn.on('pointerdown', () => {
             eventsCenter.emit('retryButton');
         });
 
-        menuBtn.on('pointerdown', () => {
+        this.menuBtn.on('pointerdown', () => {
             eventsCenter.emit('menuButton');
         })
-
-        // add a line below the buttons and     // TODO: Remove if not used
-        //const lineYPos = retryBtn.y + retryBtn.displayHeight / 2 + gameOptions.gameHeight * 0.002;
-        //this.add.line(0, 0, 0, lineYPos, gameOptions.gameWidth, lineYPos, gameOptions.textColor).setOrigin(0).setLineWidth(2);
 
     }
 
@@ -132,6 +152,55 @@ export default class GameUIScene extends Phaser.Scene {
         this.flyBtn.activateBtn();
         this.speedBtn.activateBtn();
         this.shootBtn.activateBtn();
+
+        // set the switch that the level is started
+        this.isStarted = true;
+
+    }
+
+    // activate all buttons after cooldown
+    buttonCooldownCheck() {
+
+        if (Date.now() > this.lastButtonPress + gameOptions.buttonCooldown && this.isCooldown && this.isStarted) {
+
+            this.flyBtn.activateBtn();
+            this.speedBtn.activateBtn();
+            this.shootBtn.activateBtn();
+
+            this.isCooldown = false;
+
+        }
+
+    }
+
+    // start the cooldown of the buttons
+    startCooldown() {
+
+        this.lastButtonPress = Date.now();      // update the last button press timer
+
+        // deactivate all buttons
+        this.flyBtn.deactivateBtn();
+        this.speedBtn.deactivateBtn();
+        this.shootBtn.deactivateBtn();
+
+        this.isCooldown = true;
+
+    }
+
+    // deactivate all buttons and fade out
+    fadeOut() {
+
+        // fade out
+        this.cameras.main.fadeOut(gameOptions.fadeInOutTime);
+
+        // deactivate all power up buttons
+        this.flyBtn.deactivateBtn();
+        this.speedBtn.deactivateBtn();
+        this.shootBtn.deactivateBtn();
+
+        // deactivate retry and exit button
+        this.retryBtn.removeInteractive();
+        this.menuBtn.removeInteractive();
 
     }
 

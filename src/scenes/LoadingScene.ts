@@ -1,7 +1,19 @@
 import Phaser from 'phaser';
 //import WebFontFile from "../helper/WebFontFile";
 import gameOptions from "../helper/gameOptions";
+
+// images
 import tileSetImg from "../assets/images/1-Bit-Platformer-Tileset.png";
+import particleImg from "../assets/images/particle.png";
+
+// audio
+import spawnSnd from "../assets/sounds/impactPlank_medium_003.ogg";
+import flySnd from "../assets/sounds/engine-loud.mp3";
+import speedSnd from "../assets/sounds/footstep_carpet_004.ogg";
+import deadSnd from "../assets/sounds/explosion4.ogg";
+import pickupSnd from "../assets/sounds/pickup2.ogg";
+import winSnd from "../assets/sounds/jingles-retro_02.ogg";
+
 
 // levels
 import level1JSON from "../assets/levels/Level1.json";
@@ -9,6 +21,7 @@ import level2JSON from "../assets/levels/Level2.json";
 import level3JSON from "../assets/levels/Level3.json";
 import level4JSON from "../assets/levels/Level4.json";
 import level5JSON from "../assets/levels/Level5.json";
+import level6JSON from "../assets/levels/Level6.json";
 
 // fonts
 import minogramPNG from "../assets/fonts/minogram_6x10.png";         // from here: https://frostyfreeze.itch.io/pixel-bitmap-fonts-png-xml (CC0 licensed)
@@ -71,6 +84,7 @@ export default class LoadingScene extends Phaser.Scene {
         }, this);
 
         // load images
+        this.load.image('particle', particleImg);
 
         // load tile set image
         this.load.image('tileSet', tileSetImg);
@@ -82,6 +96,7 @@ export default class LoadingScene extends Phaser.Scene {
             level3JSON,
             level4JSON,
             level5JSON,
+            level6JSON,
         ];
 
         gameOptions.maxLevel = levelArray.length;           // set the number of maximum levels
@@ -91,7 +106,12 @@ export default class LoadingScene extends Phaser.Scene {
         }
 
         // load audio
-        //this.load.audio('miss', 'assets/audio/Pew.mp3');
+        this.load.audio('spawn', spawnSnd);
+        this.load.audio('fly', flySnd);
+        this.load.audio('speed', speedSnd);
+        this.load.audio('dead', deadSnd);
+        this.load.audio('pickup', pickupSnd);
+        this.load.audio('win', winSnd);
 
         // load sprite sheet
         this.load.spritesheet('spriteSheet', tileSetImg, {frameWidth: 16, frameHeight: 16, spacing: 1});
@@ -108,8 +128,8 @@ export default class LoadingScene extends Phaser.Scene {
     create() {
 
         this.createAnimations();
-        this.scene.start('Home');                         // TODO: change back to this at the end
-        //this.scene.start('Game', {level: 4, attempts: 0});
+        //this.scene.start('Home');                         // TODO: change back to this at the end
+        this.scene.start('Home', {level: 4, attempts: 0});
 
     }
 
@@ -117,10 +137,16 @@ export default class LoadingScene extends Phaser.Scene {
     createAnimations() {
 
         // player animations
+
+        // create blinikng array for idle
+        let noBlinking: number[] = Array(23).fill(240);
+        let blinking = [262];
+
         this.anims.create({
             key: 'player-idle',
-            frames: this.anims.generateFrameNames('spriteSheet', {frames: [240]}),
-            frameRate: 0
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: blinking.concat(noBlinking, blinking)}),
+            frameRate: 10,
+            repeat: -1
         });
 
         this.anims.create({
@@ -132,7 +158,13 @@ export default class LoadingScene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'player-fly',
+            key: 'player-fly-up',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [260]}),
+            frameRate: 0,
+        });
+
+        this.anims.create({
+            key: 'player-fly-down',
             frames: this.anims.generateFrameNames('spriteSheet', {frames: [244]}),
             frameRate: 0
         });
@@ -145,6 +177,19 @@ export default class LoadingScene extends Phaser.Scene {
             repeat: -1
         });
 
+        // you
+        noBlinking = Array(33).fill(285);
+        blinking = [300];
+
+        this.anims.create({
+            key: 'you-idle',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: blinking.concat(noBlinking, blinking)}),
+            frameRate: 10,
+            repeat: -1,
+            yoyo: false
+        });
+
+        // bat
         this.anims.create({
             key: 'batEnemy-idle',
             frames: this.anims.generateFrameNames('spriteSheet', {frames: [383, 384]}),

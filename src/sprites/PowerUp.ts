@@ -63,8 +63,9 @@ export default class PowerUp extends Phaser.Physics.Arcade.Sprite {
 
     pickedUp() {
 
-        this.destroy();
+        this.scene.sound.get('pickup').play();
 
+        this.destroy();
         eventsCenter.emit('powerUpPickedUp', this.puType);
 
     }

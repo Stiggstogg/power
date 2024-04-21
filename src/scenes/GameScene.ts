@@ -18,6 +18,7 @@ export default class GameScene extends Phaser.Scene {
     private gameData!: GameSceneData;
     private instructionText!: Phaser.GameObjects.BitmapText;
     private exit!: Phaser.Physics.Arcade.Image;
+    private endType!: string;
 
     // Constructor
     constructor() {
@@ -43,6 +44,9 @@ export default class GameScene extends Phaser.Scene {
         // start UI scene
         this.scene.launch('GameUI', this.gameData);
 
+        // fade in
+        this.cameras.main.fadeIn(gameOptions.fadeInOutTime);
+
         // setup world
         this.setupWorld();
 
@@ -55,13 +59,18 @@ export default class GameScene extends Phaser.Scene {
         // Add keyboard inputs
         this.addKeys();
 
+        // setup sounds
+        this.setupSounds();
+
     }
 
     // Update function for the game loop.
     update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
 
         // update player
-        this.player.update();
+        if (this.player != undefined) {
+            this.player.update();
+        }
 
         // update power ups
         this.powerUpGroup.getChildren().forEach((powerUp) => {
@@ -92,9 +101,21 @@ export default class GameScene extends Phaser.Scene {
     // function which is executed when the level is ended (e.g. exit reached, exit reached of last level, retry, go back to menu
     endLevel(endType: string) {
 
+        eventsCenter.emit('sceneFadeout');                     // emits the fadeout event so that the game UI can also fade out
+
+        this.endType = endType;                                     // write the end type for the cleanup level scene
+
+        this.cameras.main.fadeOut(gameOptions.fadeInOutTime);       // fade out the scene (this will trigger the cleanupLevel() method as soon as it is fully faded out
+
+        this.player.destroy();                                      // destroy the player
+
+    }
+
+    cleanupLevel() {
+
         this.scene.stop('GameUI');                  // stop game ui scene
 
-        switch (endType) {
+        switch (this.endType) {
             case 'exit': {                              // player reached the exit
                 const newGameData: GameSceneData = {
                     level: this.gameData.level + 1,
@@ -135,11 +156,15 @@ export default class GameScene extends Phaser.Scene {
 
         // setup player collision with exit door
         this.physics.add.overlap(this.player, this.exit, () => {
+            this.sound.play('win');                                                         // play the win sound
             this.endLevel('exit');                                                                           // go to the next level when the player reaches the door
         });
 
         // setup player collision with enemies
         this.physics.add.overlap(this.player, this.enemies, () => {
+
+            this.player.dead();
+
             this.endLevel('retry');                                                                           // go to the next level when the player reaches the door
         });
 
@@ -220,10 +245,14 @@ export default class GameScene extends Phaser.Scene {
             this.endLevel('menu');
         });
 
-        // turn off all events on shutdown
+        // trigger the cleanuplevel method when the fadeout is finished
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.cleanupLevel();
+        });
+
+        // turn off all event listeners on shutdown
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-            eventsCenter.off('spawnPowerUp');
-            eventsCenter.off('powerUpPickedUp');
+            eventsCenter.removeAllListeners();
         });
 
     }
@@ -248,6 +277,8 @@ export default class GameScene extends Phaser.Scene {
 
         this.powerUpGroup.add(powerUp);
 
+        this.sound.get('spawn').play();
+
     }
 
     // start the level
@@ -261,6 +292,47 @@ export default class GameScene extends Phaser.Scene {
 
         // emit the event that the level is started (for the UI scene to activate buttons)
         eventsCenter.emit('startLevel');
+
+    }
+
+    // setup sounds
+    setupSounds() {
+
+        // sound when spawning a new powerup
+        const spawnSound = this.sound.get('spawn');
+        if (spawnSound == null) {        // add it to the sound manager if it isn't yet available
+            this.sound.add('spawn');
+        }
+
+        // sound when rocket is activated
+        const flySound = this.sound.get('fly');
+        if (flySound == null) {        // add it to the sound manager if it isn't yet available
+            this.sound.add('fly', {loop: true});
+        }
+
+        // sound when speed is activated
+        const speedSound = this.sound.get('speed');
+        if (speedSound == null) {        // add it to the sound manager if it isn't yet available
+            this.sound.add('speed', {loop: true});
+        }
+
+        // sound when speed is activated
+        const pickupSound = this.sound.get('pickup');
+        if (pickupSound == null) {        // add it to the sound manager if it isn't yet available
+            this.sound.add('pickup', {volume: 0.5});
+        }
+
+        // sound when speed is activated
+        const deadSound = this.sound.get('dead');
+        if (deadSound == null) {        // add it to the sound manager if it isn't yet available
+            this.sound.add('dead');
+        }
+
+        // sound when the level was completed
+        const winSound = this.sound.get('win');
+        if (winSound == null) {        // add it to the sound manager if it isn't yet available
+            this.sound.add('win');
+        }
 
     }
 

@@ -16,10 +16,12 @@ class GameOptions {
     public readonly gravity: Phaser.Math.Vector2;
     public readonly spawnerPosition: Phaser.Math.Vector2;
     public readonly spawnerPowerUpOffset: Phaser.Math.Vector2;
+    public readonly buttonCooldown: number;
     public readonly iconNumberFly: number;
     public readonly iconNumberSpeed: number;
     public readonly iconNumberShoot: number;
     public maxLevel: number;
+    public readonly inactiveColor: number;
     public readonly playerColor: number;
     public readonly youColor: number;
     public readonly enemyColor: number;
@@ -27,6 +29,7 @@ class GameOptions {
     public readonly uiColor: number;
     public readonly batSpeed: number;
     public readonly batUpDown: number;
+    public readonly fadeInOutTime: number;
 
     constructor() {
 
@@ -56,6 +59,9 @@ class GameOptions {
         this.spawnerPosition = new Vector2(this.gameWidth / 2, this.gameHeight * 0.25);
         this.spawnerPowerUpOffset = new Vector2(0, 16);                                 // offset of the point were power ups are spawned relative to the spawners position
 
+        // Power-Up button
+        this.buttonCooldown = 300;        // cooldown time, before you can spawn the next power up in ms
+
         // PowerUp
         this.powerUpSpeed = 150;
         this.iconNumberFly = 7;         // number of the icon for this power up in the spritesheet
@@ -74,6 +80,8 @@ class GameOptions {
         // Colors
         // ---------------------
 
+        this.inactiveColor = 0x808080;
+
         this.playerColor = 0xffffff;
         this.youColor = 0xffffff;
         this.enemyColor = 0xffffff;
@@ -86,6 +94,7 @@ class GameOptions {
         // ---------------------
 
         this.maxLevel = 1;          // set maximum level (start value, will be changed on loading)
+        this.fadeInOutTime = 300;
 
     }
 

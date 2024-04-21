@@ -1,10 +1,8 @@
 // spawner class
 
-import gameOptions from "../helper/gameOptions";
-
 export default class Spawner extends Phaser.GameObjects.Container {
 
-    private spawnGuy: Phaser.GameObjects.Image;
+    private spawnGuy: Phaser.GameObjects.Sprite;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
 
@@ -15,8 +13,8 @@ export default class Spawner extends Phaser.GameObjects.Container {
         const platform1 = new Phaser.GameObjects.Image(scene, -16, 0, 'spriteSheet', 64);
         const platform2 = new Phaser.GameObjects.Image(scene, 0, 0, 'spriteSheet', 65);
         const platform3 = new Phaser.GameObjects.Image(scene, 16, 0, 'spriteSheet', 66);
-        this.spawnGuy = new Phaser.GameObjects.Image(scene, 0, -16, 'spriteSheet', 285);
-        this.spawnGuy.setTint(gameOptions.youColor);
+        this.spawnGuy = new Phaser.GameObjects.Sprite(scene, 0, -16, 'spriteSheet', 285);
+        this.spawnGuy.play('you-idle');
 
         this.add([pipe, platform1, platform2, platform3, this.spawnGuy]);
 

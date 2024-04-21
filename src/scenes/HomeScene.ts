@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import gameOptions from "../helper/gameOptions";
+import {GameSceneData} from "../helper/interfaces";
 
 // "Home" scene: Main game menu scene
 export default class HomeScene extends Phaser.Scene {
@@ -9,7 +10,8 @@ export default class HomeScene extends Phaser.Scene {
     private menuEntries!: string[];
     private selected!: number;
     private items!: Phaser.GameObjects.BitmapText[];
-
+    private destinationScene!: string;
+    private gameSceneData!: GameSceneData;
 
     // Constructor
     constructor() {
@@ -22,14 +24,13 @@ export default class HomeScene extends Phaser.Scene {
     init(): void {
 
         // title text
-        this.titleText = 'POWER UP ADVENTURE';
+        this.titleText = 'POWER-UP ADVENTURE';
 
         // menu entries
         this.menuEntries = [
             'Play',
             'Credits'
         ];
-
 
         // initialize empty parameters
         this.selected = 0;
@@ -39,6 +40,18 @@ export default class HomeScene extends Phaser.Scene {
 
     // Shows the home screen and waits for the user to select a menu entry
     create(): void {
+
+        // fade in
+        this.cameras.main.fadeIn(gameOptions.fadeInOutTime);
+
+        // change the scene when the fade out is complete
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start(this.destinationScene, this.gameSceneData);
+        });
+
+        // initialize parameters
+        this.destinationScene = 'Game';
+        this.gameSceneData = {level: 1, attempts: 0};
 
         // Title
         this.title = this.add.bitmapText(gameOptions.gameWidth / 2, gameOptions.gameHeight * 0.2, 'minogram', this.titleText, 50).setOrigin(0.5, 0.5);
@@ -78,6 +91,7 @@ export default class HomeScene extends Phaser.Scene {
         }
 
         this.highlightSelected();         // highlight the selected entry
+
     }
 
     // Select the next menu entry (when clicking down)
@@ -128,10 +142,12 @@ export default class HomeScene extends Phaser.Scene {
         for (let i in this.items) {
             this.items[i].clearTint();         // change the style of all entries to the inactive style
             this.items[i].setFontSize(30);
+            this.items[i].input!.hitArea.setTo(0, 0, this.items[i].width, this.items[i].height);      // reset the hit area
         }
 
         this.items[this.selected].setTint(0xb8f818);   // change the style of the selected entry to the active style
         this.items[this.selected].setFontSize(40);
+        this.items[this.selected].input!.hitArea.setTo(0, 0, this.items[this.selected].width, this.items[this.selected].height);      // reset the hit area
 
     }
 
@@ -155,10 +171,11 @@ export default class HomeScene extends Phaser.Scene {
 
         switch(this.selected) {
             case 0:                 // start the game when the first entry is selected ("Start")
-                this.scene.start('Game', {
-                    level: 1,
-                    attempts: 0                         // always start with 0, as at the beginning of the level the number of attempts will be increased by one
-                });
+                this.destinationScene = 'Game';                 // set destination scene
+                this.gameSceneData = {level: 1, attempts: 0};   // set game scene data
+
+                this.cameras.main.fadeOut(gameOptions.fadeInOutTime);   // trigger the fade out, which will then trigger the scene change when finished.
+
                 break;
             case 1:                 // start the "Howto" scene when the "How To Play" entry is selected
                 console.log("Credits");
