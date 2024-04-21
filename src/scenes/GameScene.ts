@@ -71,7 +71,7 @@ export default class GameScene extends Phaser.Scene {
 
         // update power ups
         this.powerUpGroup.getChildren().forEach((powerUp) => {
-            powerUp.update();
+                powerUp.update();
         });
 
         // update bat enemies
@@ -161,6 +161,11 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.enemies, () => {
 
             this.player.end(true);
+
+            // destroy all powerups as they otherwise create an error (because they rely on the player to be defined)
+            this.powerUpGroup.getChildren().forEach((powerUp) => {
+                powerUp.destroy();
+            });
 
             this.endLevel('retry');                                                                           // go to the next level when the player reaches the door
         });

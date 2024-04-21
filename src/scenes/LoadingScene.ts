@@ -179,6 +179,13 @@ export default class LoadingScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'player-dance',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [320, 321]}),
+            frameRate: 2.5,
+            repeat: -1
+        });
+
         // you
         noBlinking = Array(33).fill(285);
         blinking = [300];
@@ -189,6 +196,13 @@ export default class LoadingScene extends Phaser.Scene {
             frameRate: 10,
             repeat: -1,
             yoyo: false
+        });
+
+        this.anims.create({
+            key: 'you-dance',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [322, 323]}),
+            frameRate: 2.5,
+            repeat: -1
         });
 
         // bat

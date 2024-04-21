@@ -48,7 +48,7 @@ export default class PowerUp extends Phaser.Physics.Arcade.Sprite {
             this.isFalling = false;
             this.moveBack();
         }
-        else if (this.isFalling) {      // if it is falling make sure it always falls straight down
+        else if (this.isFalling && typeof this.player !== 'undefined' && typeof this.player.body !== 'undefined') {      // if it is falling make sure it always falls straight down
 
             if (this.scene.cameras.main.worldView.x + this.scene.cameras.main.worldView.width >= this.scene.physics.world.bounds.width) {
                 this.setVelocityX(0);

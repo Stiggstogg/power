@@ -12,6 +12,8 @@ export default class HomeScene extends Phaser.Scene {
     private items!: Phaser.GameObjects.BitmapText[];
     private destinationScene!: string;
     private gameSceneData!: GameSceneData;
+    private rocket!: Phaser.GameObjects.Sprite;
+    private speed!: Phaser.GameObjects.Sprite;
 
     // Constructor
     constructor() {
@@ -39,6 +41,9 @@ export default class HomeScene extends Phaser.Scene {
         // setup music and start it (if not already playing)
         this.setupMusic();
 
+        // setup dancers
+        this.setupDancers();
+
     }
 
     // Shows the home screen and waits for the user to select a menu entry
@@ -57,7 +62,19 @@ export default class HomeScene extends Phaser.Scene {
         this.gameSceneData = {level: 1, attempts: 0};
 
         // Title
-        this.title = this.add.bitmapText(gameOptions.gameWidth / 2, gameOptions.gameHeight * 0.2, 'minogram', this.titleText, 50).setOrigin(0.5, 0.5);
+        const wiggle = 20;
+
+        this.title = this.add.bitmapText(gameOptions.gameWidth / 2 + wiggle, gameOptions.gameHeight * 0.2, 'minogram', this.titleText, 50).setOrigin(0.5, 0.5);
+
+        this.tweens.add({
+            targets: this.title,
+            duration: 800,
+            x: this.title.x - 2 * wiggle,
+            repeat: -1,
+            yoyo: true,
+            ease: 'easInExpo',
+            delay: 400
+        })
 
         // Create the menu with its entries
         this.createMenu(this.menuEntries);
@@ -66,6 +83,25 @@ export default class HomeScene extends Phaser.Scene {
         this.addKeys();
 
     }
+
+    // Update function for the game loop.
+    update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
+
+        // move power up boxes
+        this.rocket.x -= 3;
+        this.speed.x -= 3;
+
+        if (this.rocket.x < 0) {
+            this.rocket.x = gameOptions.gameWidth + this.rocket.displayWidth;
+        }
+
+        if (this.speed.x < 0) {
+            this.speed.x = gameOptions.gameWidth + this.speed.displayWidth;
+        }
+
+
+    }
+
 
     // Creates the menu with its entries, sets the styles for it and adds the mouse events
     createMenu(menuEntries: string[]): void {
@@ -143,12 +179,12 @@ export default class HomeScene extends Phaser.Scene {
     highlightSelected(): void {
 
         for (let i in this.items) {
-            this.items[i].clearTint();         // change the style of all entries to the inactive style
+            this.items[i].setTint(gameOptions.inactiveColor);         // change the style of all entries to the inactive style
             this.items[i].setFontSize(30);
             this.items[i].input!.hitArea.setTo(0, 0, this.items[i].width, this.items[i].height);      // reset the hit area
         }
 
-        this.items[this.selected].setTint(0xb8f818);   // change the style of the selected entry to the active style
+        this.items[this.selected].clearTint();   // change the style of the selected entry to the active style
         this.items[this.selected].setFontSize(40);
         this.items[this.selected].input!.hitArea.setTo(0, 0, this.items[this.selected].width, this.items[this.selected].height);      // reset the hit area
 
@@ -204,6 +240,25 @@ export default class HomeScene extends Phaser.Scene {
         if (!this.sound.get('music').isPlaying) {
             this.sound.get('music').play({volume: 0.7, loop: true});
         }
+
+    }
+
+    setupDancers() {
+
+        const xDist = 0.2;
+        const yPos = 0.55;
+
+        // player
+        const player = this.add.sprite(gameOptions.gameWidth * xDist, gameOptions.gameHeight * yPos, 'tileSet').setOrigin(0.5).setScale(4);
+        player.play('player-dance');
+
+        // you
+        const you = this.add.sprite(gameOptions.gameWidth * (1 - xDist), gameOptions.gameHeight * yPos, 'tileSet').setOrigin(0.5).setScale(4);
+        you.play('you-dance');
+
+        // power-ups
+        this.rocket = this.add.sprite(gameOptions.gameWidth * 1.1, gameOptions.gameHeight, 'spriteSheet', gameOptions.iconNumberFly).setOrigin(1).setScale(3);
+        this.speed = this.add.sprite(gameOptions.gameWidth * 1.6, gameOptions.gameHeight, 'spriteSheet', gameOptions.iconNumberSpeed).setOrigin(1).setScale(3);
 
     }
 

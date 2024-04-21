@@ -32,7 +32,7 @@ export default class WinScene extends Phaser.Scene {
         this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.5, 'minogram', 'YOU WIN!', 30).setOrigin(0.5);
 
         // Show attempts:
-        this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.7, 'minogram', 'Attempts: ' + this.gameData.attempts, 20).setOrigin(0.5);
+        this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.7, 'minogram', 'Deaths: ' + this.gameData.attempts, 20).setOrigin(0.5);
 
         // Add keyboard inputs
         this.addKeys();

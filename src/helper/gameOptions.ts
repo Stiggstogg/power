@@ -60,7 +60,7 @@ class GameOptions {
         this.spawnerPowerUpOffset = new Vector2(0, 16);                                 // offset of the point were power ups are spawned relative to the spawners position
 
         // Power-Up button
-        this.buttonCooldown = 300;        // cooldown time, before you can spawn the next power up in ms
+        this.buttonCooldown = 100;        // cooldown time, before you can spawn the next power up in ms
 
         // PowerUp
         this.powerUpSpeed = 150;
