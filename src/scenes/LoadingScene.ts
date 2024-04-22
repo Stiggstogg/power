@@ -23,6 +23,8 @@ import level3JSON from "../assets/levels/Level3.json";
 import level4JSON from "../assets/levels/Level4.json";
 import level5JSON from "../assets/levels/Level5.json";
 import level6JSON from "../assets/levels/Level6.json";
+import level7JSON from "../assets/levels/Level7.json";
+import level8JSON from "../assets/levels/Level8.json";
 
 // fonts
 import minogramPNG from "../assets/fonts/minogram_6x10.png";         // from here: https://frostyfreeze.itch.io/pixel-bitmap-fonts-png-xml (CC0 licensed)
@@ -98,6 +100,8 @@ export default class LoadingScene extends Phaser.Scene {
             level4JSON,
             level5JSON,
             level6JSON,
+            level7JSON,
+            level8JSON
         ];
 
         gameOptions.maxLevel = levelArray.length;           // set the number of maximum levels
@@ -130,8 +134,8 @@ export default class LoadingScene extends Phaser.Scene {
     create() {
 
         this.createAnimations();
-        //this.scene.start('Home');                         // TODO: change back to this at the end
-        this.scene.start('Home', {level: 4, attempts: 0});
+        this.scene.start('Home');                         // TODO: change back to this at the end
+        //this.scene.start('Game', {level: 1, attempts: 0});
 
     }
 

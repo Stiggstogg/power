@@ -50,6 +50,11 @@ export default class GameScene extends Phaser.Scene {
         // setup objects
         this.setupObjects();
 
+        // setup arrows for you and player (only in first level)
+        if (this.gameData.level == 1) {
+            this.setupArrows();
+        }
+
         // setup event listeners
         this.setupEventListeners();
 
@@ -152,7 +157,7 @@ export default class GameScene extends Phaser.Scene {
 
         // setup player collision with exit door
         this.physics.add.overlap(this.player, this.exit, () => {
-            this.sound.play('win');                                                         // play the win sound
+            this.sound.play('win', {volume: gameOptions.volumeWin});                                                         // play the win sound
             this.player.end(false);
             this.endLevel('exit');                                                                           // go to the next level when the player reaches the door
         });
@@ -279,7 +284,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.powerUpGroup.add(powerUp);
 
-        this.sound.get('spawn').play();
+        this.sound.get('spawn').play({volume: gameOptions.volumeSpawn});
 
     }
 
@@ -321,7 +326,7 @@ export default class GameScene extends Phaser.Scene {
         // sound when speed is activated
         const pickupSound = this.sound.get('pickup');
         if (pickupSound == null) {        // add it to the sound manager if it isn't yet available
-            this.sound.add('pickup', {volume: 0.5});
+            this.sound.add('pickup');
         }
 
         // sound when speed is activated
@@ -335,6 +340,49 @@ export default class GameScene extends Phaser.Scene {
         if (winSound == null) {        // add it to the sound manager if it isn't yet available
             this.sound.add('win');
         }
+
+    }
+
+    // setup arrows and description for first level
+    setupArrows() {
+
+        // arrow and text for you
+        const arrowMovement = gameOptions.gameWidth * 0.02;
+
+        const arrowYou = this.add.sprite(gameOptions.gameWidth * 0.55, gameOptions.gameHeight * 0.2, 'spriteSheet', 92);
+        const nameYou = this.add.bitmapText(arrowYou.x + gameOptions.gameWidth * 0.015, arrowYou.y + gameOptions.gameHeight * 0.005, 'minogram' , 'YOU').setOrigin(0, 0.5);
+
+        this.tweens.add({
+            targets: arrowYou,
+            duration: 500,
+            x: arrowYou.x - arrowMovement,
+            repeat: -1,
+            yoyo: true,
+            ease: 'easeOutQuint'
+        });
+
+        // arrow and text for player
+        const arrowPlayer = this.add.sprite(gameOptions.gameWidth * 0.15, gameOptions.gameHeight * 0.82, 'spriteSheet', 92);
+        const namePlayer = this.add.bitmapText(arrowPlayer.x + gameOptions.gameWidth * 0.015, arrowPlayer.y + gameOptions.gameHeight * 0.005, 'minogram' , 'PLAYER').setOrigin(0, 0.5);
+
+        // add tweens
+
+        this.tweens.add({
+            targets: arrowPlayer,
+            duration: 500,
+            x: arrowPlayer.x - arrowMovement,
+            repeat: -1,
+            yoyo: true,
+            ease: 'easeOutQuint'
+        });
+
+        // remove when the level starts
+        eventsCenter.once('startLevel', () => {
+            arrowYou.destroy();
+            nameYou.destroy();
+            arrowPlayer.destroy();
+            namePlayer.destroy();
+        });
 
     }
 

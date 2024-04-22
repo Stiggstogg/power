@@ -30,6 +30,13 @@ class GameOptions {
     public readonly batSpeed: number;
     public readonly batUpDown: number;
     public readonly fadeInOutTime: number;
+    public readonly volumeSpawn: number;
+    public readonly volumeFly: number;
+    public readonly volumeSpeed: number;
+    public readonly volumePickup: number;
+    public readonly volumeDead: number;
+    public readonly volumeWin: number;
+    public readonly volumeMusic: number;
 
     constructor() {
 
@@ -49,7 +56,7 @@ class GameOptions {
         // ---------------------
 
         // Player
-        this.playerStartPosition = new Vector2(this.gameWidth * 0.1, this.gameHeight * 0.5);
+        this.playerStartPosition = new Vector2(this.gameWidth * 0.1, this.gameHeight * 0.40);
         this.playerSpeed = 100;
         this.playerFlySpeed = new Vector2(50, 400);
         this.playerSpeedSpeed = new Vector2(100, 100);         // x is for the speed speed and y is for the additional jumping height if running
@@ -73,8 +80,16 @@ class GameOptions {
         this.batUpDown = this.gameHeight * 0.0125;   // should be 8 pixels
 
         // ---------------------
-        // Text styles
+        // Volumes
         // ---------------------
+
+        this.volumeSpawn = 1.0;
+        this.volumeFly = 1.0;
+        this.volumeSpeed = 1.0;
+        this.volumePickup = 0.2;
+        this.volumeDead = 1.0;
+        this.volumeWin = 0.3;
+        this.volumeMusic = 0.7
 
         // ---------------------
         // Colors

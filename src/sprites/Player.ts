@@ -106,7 +106,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.isFlyingUp = true;
         this.play('player-fly-up');
         this.flyParticle.start();
-        this.scene.sound.get('fly').play();
+        this.scene.sound.get('fly').play({volume: gameOptions.volumeFly});
 
     }
 
@@ -115,7 +115,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (!this.isFlying) {      // only speed up if the player is not jumping
             this.setVelocityX(gameOptions.playerSpeed + gameOptions.playerSpeedSpeed.x);
             this.play('player-speed');
-            this.scene.sound.get('speed').play();
+            this.scene.sound.get('speed').play({volume: gameOptions.volumeSpeed});
         }
 
         this.isSpeed = true;
@@ -131,7 +131,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.deadParticle.start();
 
             // play the dead sound
-            this.scene.sound.play('dead');
+            this.scene.sound.play('dead', {volume: gameOptions.volumeDead});
 
         }
 

@@ -12,8 +12,8 @@ export default class HomeScene extends Phaser.Scene {
     private items!: Phaser.GameObjects.BitmapText[];
     private destinationScene!: string;
     private gameSceneData!: GameSceneData;
-    private rocket!: Phaser.GameObjects.Sprite;
-    private speed!: Phaser.GameObjects.Sprite;
+    private rocket!: Phaser.Physics.Arcade.Sprite;
+    private speed!: Phaser.Physics.Arcade.Sprite;
 
     // Constructor
     constructor() {
@@ -42,7 +42,7 @@ export default class HomeScene extends Phaser.Scene {
         this.setupMusic();
 
         // setup dancers
-        this.setupDancers();
+        this.setupObjects();
 
     }
 
@@ -87,18 +87,13 @@ export default class HomeScene extends Phaser.Scene {
     // Update function for the game loop.
     update(_time: number, _delta: number): void {       // remove underscore if time and delta is needed
 
-        // move power up boxes
-        this.rocket.x -= 3;
-        this.speed.x -= 3;
-
-        if (this.rocket.x < 0) {
-            this.rocket.x = gameOptions.gameWidth + this.rocket.displayWidth;
+        if (this.rocket.x < - this.rocket.displayWidth) {
+            this.rocket.x = gameOptions.gameWidth;
         }
 
-        if (this.speed.x < 0) {
-            this.speed.x = gameOptions.gameWidth + this.speed.displayWidth;
+        if (this.speed.x < - this.speed.displayWidth) {
+            this.speed.x = gameOptions.gameWidth;
         }
-
 
     }
 
@@ -107,7 +102,7 @@ export default class HomeScene extends Phaser.Scene {
     createMenu(menuEntries: string[]): void {
 
         // start position and y space between the entries
-        const start = {x: gameOptions.gameWidth / 2, y: this.title.y + gameOptions.gameHeight * 0.3};      // start position
+        const start = {x: gameOptions.gameWidth / 2, y: this.title.y + gameOptions.gameHeight * 0.25};      // start position
         const ySpace = gameOptions.gameHeight * 0.2;                                         // ySpace between the entries
 
         // create menu items (loop through each item)
@@ -238,27 +233,45 @@ export default class HomeScene extends Phaser.Scene {
 
         // setup music
         if (!this.sound.get('music').isPlaying) {
-            this.sound.get('music').play({volume: 0.7, loop: true});
+            this.sound.get('music').play({volume: gameOptions.volumeMusic, loop: true});
         }
 
     }
 
-    setupDancers() {
+    setupObjects() {
+
+        // player and you characters
 
         const xDist = 0.2;
-        const yPos = 0.55;
+        const yPos = 0.52;
 
-        // player
-        const player = this.add.sprite(gameOptions.gameWidth * xDist, gameOptions.gameHeight * yPos, 'tileSet').setOrigin(0.5).setScale(4);
+        const player = this.add.sprite(gameOptions.gameWidth * xDist, gameOptions.gameHeight * yPos, 'spriteSheet', 320);
+        player.setOrigin(0.5).setScale(4);
         player.play('player-dance');
 
-        // you
-        const you = this.add.sprite(gameOptions.gameWidth * (1 - xDist), gameOptions.gameHeight * yPos, 'tileSet').setOrigin(0.5).setScale(4);
+        const you = this.add.sprite(gameOptions.gameWidth * (1 - xDist), gameOptions.gameHeight * yPos, 'spriteSheet', 322);
+        you.setOrigin(0.5).setScale(4);
         you.play('you-dance');
 
-        // power-ups
-        this.rocket = this.add.sprite(gameOptions.gameWidth * 1.1, gameOptions.gameHeight, 'spriteSheet', gameOptions.iconNumberFly).setOrigin(1).setScale(3);
-        this.speed = this.add.sprite(gameOptions.gameWidth * 1.6, gameOptions.gameHeight, 'spriteSheet', gameOptions.iconNumberSpeed).setOrigin(1).setScale(3);
+        // power-ups and floor
+        const floorScale = 3;
+        const powerUpDistance = 0.5; // relative to game width
+        const powerUpSpeed = -150;
+
+        const floor = this.add.existing(new Phaser.GameObjects.TileSprite(this, -gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 1.05, gameOptions.gameWidth * 2 / floorScale, 12, 'spriteSheet', 111));
+        floor.setOrigin(0, 1);
+        floor.setScale(3);
+        this.physics.add.existing(floor, true);
+
+        this.rocket = this.physics.add.sprite(gameOptions.gameWidth, floor.y - floor.displayHeight, 'spriteSheet', gameOptions.iconNumberFly);
+        this.rocket.setOrigin(0,1).setScale(3);
+        this.rocket.setVelocityX(powerUpSpeed);
+        this.physics.add.collider(floor, this.rocket);
+
+        this.speed = this.physics.add.sprite(gameOptions.gameWidth * (1 + powerUpDistance), floor.y - floor.displayHeight, 'spriteSheet', gameOptions.iconNumberSpeed);
+        this.speed.setOrigin(0,1).setScale(3);
+        this.speed.setVelocityX(powerUpSpeed);
+        this.physics.add.collider(floor, this.speed);
 
     }
 
