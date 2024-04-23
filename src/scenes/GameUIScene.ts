@@ -101,6 +101,18 @@ export default class GameUIScene extends Phaser.Scene {
         // setup spawner platform
         this.spawner = this.add.existing(new Spawner(this, gameOptions.spawnerPosition.x, gameOptions.spawnerPosition.y));
 
+        this.tweens.add({
+            targets: this.spawner,
+            duration: 750,
+            y: {
+                from: gameOptions.spawnerPosition.y - gameOptions.spawnerMovement,
+                to: gameOptions.spawnerPosition.y + gameOptions.spawnerMovement
+            },
+            repeat: -1,
+            yoyo: true,
+            ease: 'easeInOutCubic'
+        });
+
         // get the tilemap (for the properties)
         const mapProperties: any = this.make.tilemap({key: this.levelKey}).properties;   // create a tile map and get its properties (it is an array, but for simplicity and to avoid type errors I just used "any")
 

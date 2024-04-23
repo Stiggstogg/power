@@ -25,6 +25,8 @@ import level5JSON from "../assets/levels/Level5.json";
 import level6JSON from "../assets/levels/Level6.json";
 import level7JSON from "../assets/levels/Level7.json";
 import level8JSON from "../assets/levels/Level8.json";
+import level9JSON from "../assets/levels/Level9.json";
+import level10JSON from "../assets/levels/Level10.json";
 
 // fonts
 import minogramPNG from "../assets/fonts/minogram_6x10.png";         // from here: https://frostyfreeze.itch.io/pixel-bitmap-fonts-png-xml (CC0 licensed)
@@ -55,8 +57,8 @@ export default class LoadingScene extends Phaser.Scene {
         this.add.sprite(gameOptions.gameWidth/2, gameOptions.gameHeight/2, 'logo').setScale(0.5); // logo is already preloaded in 'Boot' scene
 
         // text
-        this.add.text(gameOptions.gameWidth/2, gameOptions.gameHeight * 0.20, 'CLOWNGAMING', {fontSize: '70px', color: '#FFFF00', fontStyle: 'bold'}).setOrigin(0.5);
-        this.add.text(gameOptions.gameWidth/2, gameOptions.gameHeight * 0.8, 'Loading...', {fontSize: '30px', color: '#27FF00'}).setOrigin(0.5);
+        this.add.text(gameOptions.gameWidth/2, gameOptions.gameHeight * 0.20, 'CLOWNGAMING', {fontSize: '70px', color: '#ffffff', fontStyle: 'bold'}).setOrigin(0.5);
+        this.add.text(gameOptions.gameWidth/2, gameOptions.gameHeight * 0.8, 'Loading...', {fontSize: '30px', color: '#ffffff'}).setOrigin(0.5);
 
         // progress bar background (e.g grey)
         const bgBar = this.add.graphics();
@@ -65,7 +67,7 @@ export default class LoadingScene extends Phaser.Scene {
         const barX = gameOptions.gameWidth / 2 - barW / 2;       // progress bar x coordinate (origin is 0, 0)
         const barY = gameOptions.gameHeight * 0.9 - barH / 2   // progress bar y coordinate (origin is 0, 0)
         bgBar.setPosition(barX, barY);
-        bgBar.fillStyle(0xF5F5F5, 1);
+        bgBar.fillStyle(0x808080, 1);
         bgBar.fillRect(0, 0, barW, barH);    // position is 0, 0 as it was already set with ".setPosition()"
 
         // progress bar
@@ -79,7 +81,7 @@ export default class LoadingScene extends Phaser.Scene {
             progressBar.clear();
 
             // set style
-            progressBar.fillStyle(0x27ff00, 1);
+            progressBar.fillStyle(0xffffff, 1);
 
             // draw rectangle
             progressBar.fillRect(0, 0, value * barW, barH);
@@ -101,7 +103,9 @@ export default class LoadingScene extends Phaser.Scene {
             level5JSON,
             level6JSON,
             level7JSON,
-            level8JSON
+            level8JSON,
+            level9JSON,
+            level10JSON
         ];
 
         gameOptions.maxLevel = levelArray.length;           // set the number of maximum levels
@@ -136,6 +140,7 @@ export default class LoadingScene extends Phaser.Scene {
         this.createAnimations();
         this.scene.start('Home');                         // TODO: change back to this at the end
         //this.scene.start('Game', {level: 1, attempts: 0});
+        //this.scene.start('Win', {level: 1, attempts: 0});
 
     }
 
@@ -190,6 +195,13 @@ export default class LoadingScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'player-dance2',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [304, 305, 306, 305]}),
+            frameRate: 5,
+            repeat: -1
+        });
+
         // you
         noBlinking = Array(33).fill(285);
         blinking = [300];
@@ -206,6 +218,13 @@ export default class LoadingScene extends Phaser.Scene {
             key: 'you-dance',
             frames: this.anims.generateFrameNames('spriteSheet', {frames: [322, 323]}),
             frameRate: 2.5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'you-dance2',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [301, 302, 303, 302]}),
+            frameRate: 5,
             repeat: -1
         });
 

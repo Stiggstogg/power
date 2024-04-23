@@ -16,6 +16,7 @@ class GameOptions {
     public readonly gravity: Phaser.Math.Vector2;
     public readonly spawnerPosition: Phaser.Math.Vector2;
     public readonly spawnerPowerUpOffset: Phaser.Math.Vector2;
+    public readonly spawnerMovement: number;
     public readonly buttonCooldown: number;
     public readonly iconNumberFly: number;
     public readonly iconNumberSpeed: number;
@@ -56,7 +57,7 @@ class GameOptions {
         // ---------------------
 
         // Player
-        this.playerStartPosition = new Vector2(this.gameWidth * 0.1, this.gameHeight * 0.40);
+        this.playerStartPosition = new Vector2(this.gameWidth * 0.1, this.gameHeight * 0.40); // new Vector2(this.gameWidth * 0.1, this.gameHeight * 0.40);
         this.playerSpeed = 100;
         this.playerFlySpeed = new Vector2(50, 400);
         this.playerSpeedSpeed = new Vector2(100, 100);         // x is for the speed speed and y is for the additional jumping height if running
@@ -65,6 +66,7 @@ class GameOptions {
         // Spawner
         this.spawnerPosition = new Vector2(this.gameWidth / 2, this.gameHeight * 0.25);
         this.spawnerPowerUpOffset = new Vector2(0, 16);                                 // offset of the point were power ups are spawned relative to the spawners position
+        this.spawnerMovement = this.gameHeight * 0.01;
 
         // Power-Up button
         this.buttonCooldown = 100;        // cooldown time, before you can spawn the next power up in ms

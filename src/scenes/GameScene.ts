@@ -158,6 +158,19 @@ export default class GameScene extends Phaser.Scene {
         // setup player collision with exit door
         this.physics.add.overlap(this.player, this.exit, () => {
             this.sound.play('win', {volume: gameOptions.volumeWin});                                                         // play the win sound
+
+            this.add.particles(this.cameras.main.worldView.x + gameOptions.gameWidth, this.cameras.main.worldView.y + gameOptions.gameHeight, 'particle',{      // play fireworks
+                color: [0xffffff],
+                lifespan: gameOptions.fadeInOutTime,
+                alpha: {min: 0, max: 1},
+                angle: {min: 180, max: 270},
+                scale: {start: 1, end: 10},
+                speed: {min: 700, max: 1000},
+                quantity: 20,
+                emitting: true,
+                stopAfter: 200
+            });
+
             this.player.end(false);
             this.endLevel('exit');                                                                           // go to the next level when the player reaches the door
         });
@@ -340,6 +353,12 @@ export default class GameScene extends Phaser.Scene {
         if (winSound == null) {        // add it to the sound manager if it isn't yet available
             this.sound.add('win');
         }
+
+        // stop all looped sounds when the scene is shutdown
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.sound.get('fly').stop();
+            this.sound.get('speed').stop();
+        });
 
     }
 

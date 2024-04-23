@@ -38,12 +38,6 @@ export default class HomeScene extends Phaser.Scene {
         this.selected = 0;
         this.items = [];
 
-        // setup music and start it (if not already playing)
-        this.setupMusic();
-
-        // setup dancers
-        this.setupObjects();
-
     }
 
     // Shows the home screen and waits for the user to select a menu entry
@@ -74,10 +68,16 @@ export default class HomeScene extends Phaser.Scene {
             yoyo: true,
             ease: 'easInExpo',
             delay: 400
-        })
+        });
 
         // Create the menu with its entries
         this.createMenu(this.menuEntries);
+
+        // setup music and start it (if not already playing)
+        this.setupMusic();
+
+        // setup dancers
+        this.setupObjects();
 
         // Add keyboard inputs
         this.addKeys();
