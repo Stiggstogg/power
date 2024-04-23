@@ -89,7 +89,7 @@ class GameOptions {
         this.volumePickup = 0.2;
         this.volumeDead = 1.0;
         this.volumeWin = 0.3;
-        this.volumeMusic = 0.7
+        this.volumeMusic = 0.7;
 
         // ---------------------
         // Colors

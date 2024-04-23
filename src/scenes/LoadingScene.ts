@@ -7,12 +7,12 @@ import tileSetImg from "../assets/images/1-Bit-Platformer-Tileset.png";
 import particleImg from "../assets/images/particle.png";
 
 // audio
-import spawnSnd from "../assets/sounds/impactPlank_medium_003.ogg";
+import spawnSnd from "../assets/sounds/impactPlank_medium_003.mp3";
 import flySnd from "../assets/sounds/engine-loud.mp3";
-import speedSnd from "../assets/sounds/footstep_carpet_004.ogg";
-import deadSnd from "../assets/sounds/explosion4.ogg";
-import pickupSnd from "../assets/sounds/pickup2.ogg";
-import winSnd from "../assets/sounds/jingles-retro_02.ogg";
+import speedSnd from "../assets/sounds/footstep_carpet_004.mp3";
+import deadSnd from "../assets/sounds/explosion4.mp3";
+import pickupSnd from "../assets/sounds/pickup2.mp3";
+import winSnd from "../assets/sounds/jingles-retro_02.mp3";
 import musicSnd from "../assets/sounds/power-music.mp3";
 
 
