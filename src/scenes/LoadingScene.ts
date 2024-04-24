@@ -139,7 +139,7 @@ export default class LoadingScene extends Phaser.Scene {
 
         this.createAnimations();
         this.scene.start('Home');                         // TODO: change back to this at the end
-        //this.scene.start('Game', {level: 1, attempts: 0});
+        //this.scene.start('Game', {level: 10, attempts: 0});
         //this.scene.start('Win', {level: 1, attempts: 0});
 
     }
@@ -212,6 +212,12 @@ export default class LoadingScene extends Phaser.Scene {
             frameRate: 10,
             repeat: -1,
             yoyo: false
+        });
+
+        this.anims.create({
+            key: 'you-boxpush',
+            frames: this.anims.generateFrameNames('spriteSheet', {frames: [362, 363, 364]}),
+            frameRate: 10,
         });
 
         this.anims.create({

@@ -69,7 +69,7 @@ class GameOptions {
         this.spawnerMovement = this.gameHeight * 0.01;
 
         // Power-Up button
-        this.buttonCooldown = 100;        // cooldown time, before you can spawn the next power up in ms
+        this.buttonCooldown = 20;        // cooldown time, before you can spawn the next power up in ms
 
         // PowerUp
         this.powerUpSpeed = 150;
