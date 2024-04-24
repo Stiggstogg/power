@@ -139,7 +139,7 @@ export default class LoadingScene extends Phaser.Scene {
 
         this.createAnimations();
         this.scene.start('Home');                         // TODO: change back to this at the end
-        //this.scene.start('Game', {level: 10, attempts: 0});
+        //this.scene.start('Game', {level: 9, attempts: 0});
         //this.scene.start('Win', {level: 1, attempts: 0});
 
     }

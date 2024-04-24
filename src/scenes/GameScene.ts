@@ -200,6 +200,9 @@ export default class GameScene extends Phaser.Scene {
         const map = this.make.tilemap({key: this.levelKey});                                // create a tile map
         const tileSet = map.addTilesetImage('1BitPlatformer', 'tileSet')!;          // create a tileSet
 
+        // decorations
+        map.createLayer('decorations', tileSet)!.setTint(gameOptions.inactiveColor);
+
         // platforms
         this.platforms = map.createLayer('platforms', tileSet)!;                                                 // create a new layer for the platforms
         this.platforms.setCollisionByProperty({collides: true});                                               // set collisions for the platformsg
