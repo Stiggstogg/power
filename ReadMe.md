@@ -10,7 +10,6 @@ More information on the game page!
 # Credits and Tools
 - Special thanks to my support and inspiration at home! 🍄❤️
 - Thanks to my play testers. 🦶
-- 
 - Framework: [Phaser 3](https://phaser.io/)
 - Code: Home made typescript spaghetti code using [WebStorm](https://www.jetbrains.com/de-de/webstorm/)
 - Bundler: [vite.js](https://vitejs.dev/)
