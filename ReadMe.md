@@ -19,8 +19,8 @@ More information on the game page!
 - Font: [Minogram 6x10](https://frostyfreeze.itch.io/pixel-bitmap-fonts-png-xml) from [frostyfreeze](https://frostyfreeze.itch.io/)
 
 # Video and Screenshots:
-[Youtube: Comming soon](https://youtu.be/xPrzYKAPCug)
+Youtube: Comming soon
 
-![Screenshot 1]()
-![Screenshot 2]()
-![Screenshot 3]()
+![Screenshot 1](https://img.itch.zone/aW1hZ2UvMjY0NDUzMi8xNTkwOTUzMS5wbmc=/original/ZHB9fk.png)
+![Screenshot 2](https://img.itch.zone/aW1hZ2UvMjY0NDUzMi8xNTkwOTU3MS5wbmc=/original/IvVQxQ.png)
+![Screenshot 3](https://img.itch.zone/aW1hZ2UvMjY0NDUzMi8xNTkwOTQ1NS5wbmc=/original/NJBKlx.png)
