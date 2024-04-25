@@ -208,16 +208,14 @@ export default class HomeScene extends Phaser.Scene {
                 this.destinationScene = 'Game';                 // set destination scene
                 this.gameSceneData = {level: 1, attempts: 0};   // set game scene data
 
-                this.cameras.main.fadeOut(gameOptions.fadeInOutTime);   // trigger the fade out, which will then trigger the scene change when finished.
-
                 break;
             case 1:                 // start the "Howto" scene when the "How To Play" entry is selected
-                console.log("Credits");
-                break;
-            case 2:                 // start the "Credits" scene when the "How To Play" entry is selected
-                console.log("Credits");
+                this.destinationScene = 'Credits';                 // set destination scene
+                this.gameSceneData = {level: 1, attempts: 0};   // set game scene data
                 break;
         }
+
+        this.cameras.main.fadeOut(gameOptions.fadeInOutTime);   // trigger the fade out, which will then trigger the scene change when finished.
 
     }
 

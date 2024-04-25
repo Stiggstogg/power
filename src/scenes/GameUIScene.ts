@@ -83,13 +83,28 @@ export default class GameUIScene extends Phaser.Scene {
     addKeys(): void {
 
         // add keyboard controls
-        this.input.keyboard?.addKey('A').on('down', () => {
+        this.input.keyboard?.addKey('W').on('down', () => {
             this.flyBtn.click();        // "click" on the button
         });
 
-        // add keyboard controls
+        this.input.keyboard?.addKey('UP').on('down', () => {
+            this.flyBtn.click();        // "click" on the button
+        });
+
         this.input.keyboard?.addKey('S').on('down', () => {
             this.speedBtn.click();        // "click" on the button
+        });
+
+        this.input.keyboard?.addKey('DOWN').on('down', () => {
+            this.speedBtn.click();        // "click" on the button
+        });
+
+        this.input.keyboard?.addKey('R').on('down', () => {
+            eventsCenter.emit('retryButton');
+        });
+
+        this.input.keyboard?.addKey('P').on('down', () => {
+            eventsCenter.emit('menuButton');
         });
 
 

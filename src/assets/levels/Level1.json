@@ -156,7 +156,7 @@
         {
          "name":"instructions",
          "type":"string",
-         "value":"Welcome to POWER UP ADVENTURE! A jump 'n' run game where you need to provide the player power-ups to help them through the level.\n\nTo spawn a \"Rocket\" power-up click on the power-up button on the right or use the A key. Time your power-ups carefully to let the player avoid spikes and other dangers.\n\nClick on the screen or the Enter \/ Space key to start."
+         "value":"Welcome to POWER-UP ADVENTURE! A jump 'n' run game where you need to supply the player with power-ups to help them through the level.\n\nTo spawn a \"Rocket\" power-up click on the power-up button on the right or use the W or UP ARROW key. Time your power-ups carefully to let the player avoid spikes and other dangers.\n\nClick on the screen or the Enter \/ Space key to start. Use the buttons on the top right or keys R for retry and P to quit."
         }, 
         {
          "name":"shootNumber",

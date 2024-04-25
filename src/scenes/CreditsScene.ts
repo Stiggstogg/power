@@ -1,24 +1,19 @@
 import Phaser from 'phaser';
 
 import gameOptions from "../helper/gameOptions";
-import {GameSceneData} from "../helper/interfaces";
 
-// "Game" scene: Scene for the main game
-export default class WinScene extends Phaser.Scene {
-
-    private gameData!: GameSceneData;
+// "Credits" scene: Scene for the main game
+export default class CreditsScene extends Phaser.Scene {
 
     // Constructor
     constructor() {
         super({
-            key: 'Win'
+            key: 'Credits'
         });
     }
 
     /// Initialize parameters
-    init(data: GameSceneData): void {
-
-        this.gameData = data;
+    init(): void {
 
     }
 
@@ -28,32 +23,35 @@ export default class WinScene extends Phaser.Scene {
         // fade in
         this.cameras.main.fadeIn(gameOptions.fadeInOutTime);
 
-        // Show win text
-        const wiggle = 20;
+        this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.2, 'minogram', 'CREDITS', 50).setOrigin(0.5);
 
-        const congratulations = this.add.bitmapText(gameOptions.gameWidth * 0.5 + wiggle, gameOptions.gameHeight * 0.15, 'minogram', 'CONGRATULATIONS!', 50).setOrigin(0.5).setMaxWidth(gameOptions.gameWidth * 0.6);
+        const leftCredits = this.add.bitmapText(gameOptions.gameWidth * 0.25, gameOptions.gameHeight * 0.3, 'minogram',
+            'Special thanks to my support and inspiration at home!\n\n' +
+            'Thanks to my play testers.\n\n\n' +
+            'Framework:\n' +
+            'Code:\n' +
+            'Bundler:\n' +
+            'Graphics:\n' +
+            'Music:\n' +
+            'Sound effects:',
+            10).setOrigin(0);
 
-        this.tweens.add({
-            targets: congratulations,
-            duration: 800,
-            x: congratulations.x - 2 * wiggle,
-            repeat: -1,
-            yoyo: true,
-            ease: 'easInExpo',
-            delay: 400
-        });
+        this.add.bitmapText(leftCredits.x + gameOptions.gameWidth * 0.16, leftCredits.y, 'minogram',
+            '\n\n' +
+            '\n\n\n' +
+            'Phaser 3\n' +
+            'Home made typescript spaghetti code\n' +
+            'vite.js\n' +
+            '1-Bit Platformer Pack from Kenney\n' +
+            'Home made noise played on my instruments\n' +
+            'My vacuum cleaner (rocket) and sounds from Kenney',
+            10).setOrigin(0);
 
-        this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.5, 'minogram', 'You have powered-up to victory!', 30).setOrigin(0.5);
+        this.add.image(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.39, 'spriteSheet', 365);
 
-        // Show attempts:
-        this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.75, 'minogram', 'Deaths: ' + this.gameData.attempts, 20).setOrigin(0.5);
-
-        if (this.gameData.attempts == 0) {
-            this.add.bitmapText(gameOptions.gameWidth * 0.5, gameOptions.gameHeight * 0.85, 'minogram', 'WOW! This was a perfect game!', 20).setOrigin(0.5);
-        }
-
-        // setup dancers
-        this.setupObjects();
+        const leftPerson = this.add.image(gameOptions.gameWidth * 0.74, gameOptions.gameHeight * 0.31, 'spriteSheet', 263);
+        this.add.image(leftPerson.x + leftPerson.displayHeight, leftPerson.y, 'spriteSheet', 264);
+        this.add.image(leftPerson.x + leftPerson.displayWidth / 2, leftPerson.y - leftPerson.displayHeight * 0.3, 'spriteSheet', 40).setOrigin(0.5, 1);
 
         // Add keyboard inputs
         this.addKeys();
@@ -86,7 +84,6 @@ export default class WinScene extends Phaser.Scene {
         this.input.keyboard?.addKey('SPACE').once('down', () => {
             this.backToMenu();
         });
-
 
     }
 

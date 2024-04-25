@@ -265,7 +265,7 @@
         {
          "name":"instructions",
          "type":"string",
-         "value":"You have a new power-up available: Speed!\nWhen picked up by the player it provides a speed boost for 1.5 seconds.\n\nTo spawn this power-up click on the button or use the S key.\n\n"
+         "value":"You have a new power-up available: Speed!\nWhen picked up by the player it provides a speed boost for 1.5 seconds.\n\nTo spawn this power-up click on the button or use the S or UP ARROW key.\n\n"
         }, 
         {
          "name":"shootNumber",

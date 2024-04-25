@@ -10,13 +10,14 @@ import GameScene from './scenes/GameScene';
 import gameOptions from "./helper/gameOptions";
 import GameUIScene from "./scenes/GameUIScene";
 import WinScene from "./scenes/WinScene";
+import CreditsScene from "./scenes/CreditsScene";
 
 // Phaser 3 config
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: gameOptions.gameWidth,
     height: gameOptions.gameHeight,
-    scene: [BootScene, LoadingScene, HomeScene, GameScene, GameUIScene, WinScene],
+    scene: [BootScene, LoadingScene, HomeScene, GameScene, GameUIScene, WinScene, CreditsScene],
     title: 'Power',                  // Shown in the console
     scale: {
         mode: Phaser.Scale.FIT,
